@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="login-page">
+
+    <div class="login-box">
+
+        <h1>Create Account</h1>
+
+        <p class="login-text">
+            Register to start managing your tasks efficiently.
+        </p>
+
+        <!-- REGISTER FORM -->
+        <form method="POST" action="/register">
+
+            <input type="text" name="username" placeholder="Enter Username" required>
+
+            <div class="password-box">
+                <input type="password" name="password" placeholder="Enter Password" id="password" required>
+                <span id="togglePassword">👁️</span>
+            </div>
+
+            <button type="submit">Register</button>
+
+        </form>
+
+        <p class="register-link">
+            Already have an account?
+            <a href="/login">Login</a>
+        </p>
+
+    </div>
+
+</div>
+
+<!-- Password Toggle JS -->
+<script>
+const password = document.getElementById('password');
+const togglePassword = document.getElementById('togglePassword');
+
+togglePassword.addEventListener('click', function () {
+    if (password.type === 'password') {
+        password.type = 'text';
+    } else {
+        password.type = 'password';
+    }
+});
+</script>
+
+</body>
+</html>
