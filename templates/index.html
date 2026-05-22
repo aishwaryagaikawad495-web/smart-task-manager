@@ -17,17 +17,15 @@
         <div class="logo">
             Smart Task Manager
         </div>
-
-        <div class="nav-links">
-
+    <div class="nav-links">
     <a href="/">Home</a>
 
     {% if session.get('user') %}
 
         <a href="/logout">Logout</a>
+        <a href="/tasks">Tasks</a>
 
     {% else %}
-
         <a href="/login">Login</a>
         <a href="/register">Register</a>
 

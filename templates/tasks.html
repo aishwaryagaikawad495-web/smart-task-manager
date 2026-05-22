@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tasks</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+
+
+<nav>
+
+        <div class="logo">
+            Smart Task Manager
+        </div>
+    <div class="nav-links">
+    <a href="/">Home</a>
+
+    {% if session.get('user') %}
+
+        <a href="/logout">Logout</a>
+        <a href="/tasks">Tasks</a>
+
+    {% else %}
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+
+    {% endif %}
+
+</div>
+
+    </nav>
+
+<div class="tasks-page">
+
+    <h1>Your Tasks</h1>
+
+    <!-- ADD TASK -->
+    <form method="POST" action="/tasks" class="task-form">
+        <input type="text" name="task" placeholder="Enter new task" required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <!-- TASK LIST -->
+    <ul class="task-list">
+        {% for task in tasks %}
+            <li>
+                <span>
+                    {{ task[2] }} - <b>{{ task[3] }}</b>
+                </span>
+                <span>
+                    {% if task[3] == 'pending' %}
+                        <a href="/complete/{{ task[0] }}">Done</a>
+                    {% endif %}
+                    <a href="/delete/{{ task[0] }}">Delete</a>
+                </span>
+            </li>
+        {% endfor %}
+    </ul>
+
+</div>
+
+
+</body>
+</html>

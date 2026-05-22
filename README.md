@@ -20,18 +20,22 @@ It provides user registration, login/logout functionality, and session-based aut
 - JavaScript
 
 # Project Structure
-SmartTaskManager/
+Smart-Task-Manager/
 │
 ├── app.py
-├── data.db
-├── templates/
+├── data.db   (optional to include)
+├── requirements.txt
+│
+├── /templates
 │   ├── index.html
 │   ├── login.html
 │   ├── register.html
+│   ├── tasks.html
 │
-├── static/
+├── /static
 │   └── style.css
-
+│
+└── README.md
 
 # How to Run This Project
 1. Install Flask

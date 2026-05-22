@@ -7,12 +7,47 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
+
+<nav>
+
+        <div class="logo">
+            Smart Task Manager
+        </div>
+    <div class="nav-links">
+    <a href="/">Home</a>
+
+    {% if session.get('user') %}
+
+        <a href="/logout">Logout</a>
+        <a href="/tasks">Tasks</a>
+
+    {% else %}
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+
+    {% endif %}
+
+</div>
+
+    </nav>
+
+
     <div class="login-page">
         <div class="login-box">
             <h1>Welcome Back</h1>
             <p class="login-text">
                 Login to continue managing your tasks efficiently.
             </p>
+            {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="flash-message">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
             <form method="POST" action="/login">
                 <input type="text" name="username" placeholder="Enter Username" required>
                 <div class="password-box">
