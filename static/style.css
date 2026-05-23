@@ -359,3 +359,80 @@ footer{
 .task-list a:hover {
     color: #007b80;
 }
+
+
+
+/* ADMIN DASHBOARD */
+
+.admin-container {
+    padding: 40px;
+    text-align: center;
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 30px 0;
+}
+
+.card {
+    background-color: white;
+    padding: 25px;
+    width: 180px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card h2 {
+    font-size: 30px;
+    color: #00adb5;
+}
+
+.card p {
+    color: #555;
+}
+
+table {
+    width: 80%;
+    margin: auto;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+table th, table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #00adb5;
+    color: white;
+}
+
+
+
+
+.error{
+    background-color: #ffdddd;
+    color: red;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.success{
+    background-color: #ddffdd;
+    color: green;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}

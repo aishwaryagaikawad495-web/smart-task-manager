@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<nav>
+    <div class="logo">Admin Dashboard</div>
+    <div class="nav-links">
+        <a href="/tasks">Tasks</a>
+        <a href="/logout">Logout</a>
+    </div>
+</nav>
+
+<div class="admin-container">
+
+    <h1>Dashboard Overview</h1>
+
+    <!-- STATS CARDS -->
+    <div class="stats">
+
+        <div class="card">
+            <h2>{{ total_tasks }}</h2>
+            <p>Total Tasks</p>
+        </div>
+
+        <div class="card">
+            <h2>{{ pending_tasks }}</h2>
+            <p>Pending Tasks</p>
+        </div>
+
+        <div class="card">
+            <h2>{{ completed_tasks }}</h2>
+            <p>Completed Tasks</p>
+        </div>
+
+        <div class="card">
+            <h2>{{ total_users }}</h2>
+            <p>Total Users</p>
+        </div>
+
+    </div>
+
+    <!-- TASK TABLE -->
+    <h2>All Tasks</h2>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Task</th>
+            <th>Status</th>
+        </tr>
+
+        {% for task in tasks %}
+        <tr>
+            <td>{{ task[0] }}</td>
+            <td>{{ task[1] }}</td>
+            <td>{{ task[2] }}</td>
+            <td>{{ task[3] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+</body>
+</html>
