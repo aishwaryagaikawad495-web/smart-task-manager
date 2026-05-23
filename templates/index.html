@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,7 @@
     <title>Smart Task Manager</title>
 
 </head>
+
 <body>
 
     <!-- Navbar -->
@@ -17,21 +18,22 @@
         <div class="logo">
             Smart Task Manager
         </div>
-    <div class="nav-links">
-    <a href="/">Home</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
 
-    {% if session.get('user') %}
+            {% if session.get('user') %}
+            <a href="/profile">Profile</a>
+            <a href="/tasks">Tasks</a>
+            <a href="/logout">Logout</a>
 
-        <a href="/logout">Logout</a>
-        <a href="/tasks">Tasks</a>
 
-    {% else %}
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
+            {% else %}
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
 
-    {% endif %}
+            {% endif %}
 
-</div>
+        </div>
 
     </nav>
 
@@ -46,45 +48,48 @@
             and stay productive with Smart Task Manager.
         </p>
 
-        <button>Get Started</button>
+        <a href="/get-started" class="hero-btn">
+            Get Started
+        </a>
 
     </section>
 
 
-<!-- Features Section -->
+    <!-- Features Section -->
 
-<section class="features">
+    <section class="features">
 
-    <h2>Features</h2>
+        <h2>Features</h2>
 
-    <div class="feature-container">
+        <div class="feature-container">
 
-        <div class="feature-card">
-            <h3>Task Management</h3>
-            <p>Add, organize, and manage your daily tasks easily.</p>
+            <div class="feature-card">
+                <h3>Task Management</h3>
+                <p>Add, organize, and manage your daily tasks easily.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>User Authentication</h3>
+                <p>User authentication system for secure access.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3>Dark Mode</h3>
+                <p>Clean and modern interface with dark mode support.</p>
+            </div>
+
         </div>
 
-        <div class="feature-card">
-            <h3>User Authentication</h3>
-            <p>User authentication system for secure access.</p>
-        </div>
+    </section>
+    <!-- Footer -->
 
-        <div class="feature-card">
-            <h3>Dark Mode</h3>
-            <p>Clean and modern interface with dark mode support.</p>
-        </div>
+    <footer>
 
-    </div>
+        <p>© 2026 Smart Task Manager | All Rights Reserved</p>
 
-</section>
-<!-- Footer -->
-
-<footer>
-
-    <p>© 2026 Smart Task Manager | All Rights Reserved</p>
-
-</footer>
+    </footer>
 
 
 </body>
+
 </html>

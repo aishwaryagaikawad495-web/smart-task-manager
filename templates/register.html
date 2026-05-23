@@ -1,87 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
     <nav>
 
         <div class="logo">
             Smart Task Manager
         </div>
-    <div class="nav-links">
-    <a href="/">Home</a>
-    {% if session.get('user') %}
-        <a href="/logout">Logout</a>
-        <a href="/tasks">Tasks</a>
-    {% else %}
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            {% if session.get('user') %}
+            <a href="/profile">Profile</a>
+            <a href="/tasks">Tasks</a>
+            <a href="/logout">Logout</a>
 
-    {% endif %}
+            {% else %}
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
 
-</div>
+            {% endif %}
+
+        </div>
 
     </nav>
-<div class="login-page">
+    <div class="login-page">
 
-    <div class="login-box">
+        <div class="login-box">
 
-        <h1>Create Account</h1>
+            <h1>Create Account</h1>
 
-        <p class="login-text">
-            Register to start managing your tasks efficiently.
-        </p>
+            <p class="login-text">
+                Register to start managing your tasks efficiently.
+            </p>
 
-        <!-- REGISTER FORM -->
-        <form method="POST" action="/register">
+            <!-- REGISTER FORM -->
+            <form method="POST" action="/register">
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="{{ category }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
 
-            <input type="text" name="username" placeholder="Enter Username" required>
+                <input type="text" name="username" placeholder="Enter Username" required>
 
-            <div class="password-box">
-                <input type="password" name="password" placeholder="Enter Password" id="password" required>
-                <span id="togglePassword">👁️</span>
-            </div>
+                <div class="password-box">
+                    <input type="password" name="password" placeholder="Enter Password" id="password" required>
+                    <span id="togglePassword">👁️</span>
+                </div>
 
-            <button type="submit">Register</button>
+                <button type="submit">Register</button>
 
-        </form>
+            </form>
 
-        <p class="register-link">
-            Already have an account?
-            <a href="/login">Login</a>
-        </p>
+            <p class="register-link">
+                Already have an account?
+                <a href="/login">Login</a>
+            </p>
+
+        </div>
 
     </div>
 
-</div>
+    <!-- Password Toggle JS -->
+    <script>
+        const password = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
 
-<!-- Password Toggle JS -->
-<script>
-const password = document.getElementById('password');
-const togglePassword = document.getElementById('togglePassword');
-
-togglePassword.addEventListener('click', function () {
-    if (password.type === 'password') {
-        password.type = 'text';
-    } else {
-        password.type = 'password';
-    }
-});
-</script>
+        togglePassword.addEventListener('click', function () {
+            if (password.type === 'password') {
+                password.type = 'text';
+            } else {
+                password.type = 'password';
+            }
+        });
+    </script>
 
 </body>
+
 </html>

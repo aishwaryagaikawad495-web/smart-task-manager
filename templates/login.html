@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
 
-<nav>
+    <nav>
 
         <div class="logo">
             Smart Task Manager
         </div>
-    <div class="nav-links">
-    <a href="/">Home</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
 
-    {% if session.get('user') %}
+            {% if session.get('user') %}
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
+            <a href="/tasks">Tasks</a>
 
-        <a href="/logout">Logout</a>
-        <a href="/tasks">Tasks</a>
+            {% else %}
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
 
-    {% else %}
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
+            {% endif %}
 
-    {% endif %}
-
-</div>
+        </div>
 
     </nav>
 
@@ -40,14 +42,14 @@
                 Login to continue managing your tasks efficiently.
             </p>
             {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    {% for message in messages %}
-      <div class="flash-message">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="flash-message">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
             <form method="POST" action="/login">
                 <input type="text" name="username" placeholder="Enter Username" required>
                 <div class="password-box">
@@ -57,10 +59,10 @@
                     <span id="togglePassword">👁️</span>
 
                 </div>
-        <button type="submit">Login</button>
-        <p class="forgot-password">
-        <a href="#">Forgot Password?</a>
-        </p>
+                <button type="submit">Login</button>
+                <p class="forgot-password">
+                    <a href="#">Forgot Password?</a>
+                </p>
             </form>
             <p class="register-link">
                 Don't have an account?
@@ -68,27 +70,28 @@
             </p>
         </div>
     </div>
-<script>
+    <script>
 
-    const password = document.getElementById('password');
+        const password = document.getElementById('password');
 
-    const togglePassword = document.getElementById('togglePassword');
+        const togglePassword = document.getElementById('togglePassword');
 
-    togglePassword.addEventListener('click', function(){
+        togglePassword.addEventListener('click', function () {
 
-        if(password.type === 'password'){
+            if (password.type === 'password') {
 
-            password.type = 'text';
+                password.type = 'text';
 
-        }
-        else{
+            }
+            else {
 
-            password.type = 'password';
+                password.type = 'password';
 
-        }
+            }
 
-    });
+        });
 
-</script>
+    </script>
 </body>
+
 </html>

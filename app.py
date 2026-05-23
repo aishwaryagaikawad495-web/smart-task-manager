@@ -1,4 +1,5 @@
 from flask import Flask, render_template, session,redirect,request,flash
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key="mysecretkey"
@@ -25,7 +26,8 @@ c.execute("""
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT,
         task TEXT,
-        status TEXT DEFAULT 'pending'
+        status TEXT DEFAULT 'pending',
+        deadline TEXT
     )
     """)
 
@@ -76,14 +78,13 @@ def login():
         if user:
             session['user'] = user[1]   # username
             session['role'] = user[3]   # role
-            
+            flash("✅ Login Successful", "success")
             if user[3] == 'admin':
                 return redirect('/admin')
             else:
                 return redirect('/tasks')
-
         else:
-            flash("❌ Invalid Credentials")
+            flash("❌ Invalid Credentials","error")
 
     return render_template('login.html')
 
@@ -131,10 +132,11 @@ def tasks():
     #  Add task
     if request.method == 'POST':
         task = request.form['task']
+        deadline = request.form['deadline']
         username = session['user']
 
-        c.execute("INSERT INTO tasks (username, task) VALUES (?, ?)",
-                  (username, task))
+        c.execute("INSERT INTO tasks (username, task,deadline) VALUES (?, ?,?)",
+                  (username, task,deadline))
         conn.commit()
 
     #  Show tasks for logged-in user
@@ -143,8 +145,28 @@ def tasks():
     data = c.fetchall()
 
     conn.close()
+    today = datetime.now().date()
 
-    return render_template('tasks.html', tasks=data)
+    updated_tasks = []
+
+    for task in data:
+
+        deadline_date = datetime.strptime(
+            task[4],
+            "%Y-%m-%d"
+    ).date()
+
+        updated_tasks.append(
+        (
+            task[0],
+            task[1],
+            task[2],
+            task[3],
+            deadline_date
+        )
+    )
+    return render_template('tasks.html', tasks=updated_tasks,today=today)
+
 
 
 @app.route('/complete/<int:id>')
@@ -155,7 +177,10 @@ def complete_task(id):
     conn = sqlite3.connect("data.db")
     c = conn.cursor()
 
-    c.execute("UPDATE tasks SET status='completed' WHERE id=?", (id,))
+    c.execute(
+    "UPDATE tasks SET status='completed' WHERE id=? AND username=?",
+    (id, session['user'])
+)
 
     conn.commit()
     conn.close()
@@ -165,10 +190,15 @@ def complete_task(id):
 
 @app.route('/delete/<int:id>')
 def delete_task(id):
+    if 'user' not in session:
+        return redirect('/login')
     conn = sqlite3.connect("data.db")
     c = conn.cursor()
 
-    c.execute("DELETE FROM tasks WHERE id=?", (id,))
+    c.execute(
+    "DELETE FROM tasks WHERE id=? AND username=?",
+    (id, session['user'])
+)
 
     conn.commit()
     conn.close()
@@ -207,6 +237,7 @@ def admin():
     c.execute("SELECT COUNT(*) FROM users")
     total_users = c.fetchone()[0]
 
+
     conn.close()
 
     return render_template(
@@ -217,6 +248,85 @@ def admin():
         completed_tasks=completed_tasks,
         total_users=total_users
     )
+
+
+
+@app.route('/profile')
+def profile():
+
+    if 'user' not in session:
+        return redirect('/login')
+
+    conn = sqlite3.connect("data.db")
+    c = conn.cursor()
+
+    username = session['user']
+
+    # Total tasks
+    c.execute(
+        "SELECT COUNT(*) FROM tasks WHERE username=?",
+        (username,)
+    )
+    total_tasks = c.fetchone()[0]
+
+    # Completed tasks
+    c.execute(
+        "SELECT COUNT(*) FROM tasks WHERE username=? AND status='completed'",
+        (username,)
+    )
+    completed_tasks = c.fetchone()[0]
+
+    # Pending tasks
+    c.execute(
+        "SELECT COUNT(*) FROM tasks WHERE username=? AND status='pending'",
+        (username,)
+    )
+    pending_tasks = c.fetchone()[0]
+
+
+    if total_tasks > 0:
+        completion_percentage = int(
+            (completed_tasks / total_tasks) * 100
+        )
+    else:
+        completion_percentage = 0
+
+
+# User Level
+    if completed_tasks >= 20:
+        user_level = "Task Master"
+
+    elif completed_tasks >= 10:
+        user_level = "Productive User"
+
+    else:
+        user_level = "Beginner"
+
+
+    conn.close()
+
+    return render_template(
+    'profile.html',
+
+    username=username,
+    role=session['role'],
+
+    total_tasks=total_tasks,
+    completed_tasks=completed_tasks,
+    pending_tasks=pending_tasks,
+
+    completion_percentage=completion_percentage,
+    user_level=user_level
+)
+
+
+@app.route('/get-started')
+def get_started():
+
+    if 'user' in session:
+        return redirect('/tasks')
+
+    return redirect('/register')
 
 
 @app.route('/logout')

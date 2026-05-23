@@ -1,65 +1,108 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Tasks</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
 
 
-<nav>
+    <nav>
 
         <div class="logo">
             Smart Task Manager
         </div>
-    <div class="nav-links">
-    <a href="/">Home</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
 
-    {% if session.get('user') %}
+            {% if session.get('user') %}
+            <a href="/profile">Profile</a>
+            <a href="/tasks">Tasks</a>
+            <a href="/logout">Logout</a>
 
-        <a href="/logout">Logout</a>
-        <a href="/tasks">Tasks</a>
 
-    {% else %}
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
+            {% else %}
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
 
-    {% endif %}
+            {% endif %}
 
-</div>
+        </div>
 
     </nav>
 
-<div class="tasks-page">
+    <div class="tasks-page">
 
-    <h1>Your Tasks</h1>
+        <h1>Your Tasks</h1>
 
-    <!-- ADD TASK -->
-    <form method="POST" action="/tasks" class="task-form">
-        <input type="text" name="task" placeholder="Enter new task" required>
-        <button type="submit">Add Task</button>
-    </form>
+        <!-- ADD TASK -->
+        <form method="POST" action="/tasks" class="task-form">
+            <input type="text" name="task" placeholder="Enter new task" required>
+            <input type="date" name="deadline" required>
+            <button type="submit">Add Task</button>
+        </form>
 
-    <!-- TASK LIST -->
-    <ul class="task-list">
-        {% for task in tasks %}
-            <li>
-                <span>
-                    {{ task[2] }} - <b>{{ task[3] }}</b>
-                </span>
-                <span>
+        <!-- TASK LIST -->
+        <ul class="task-list">
+            {% for task in tasks %}
+            <li class="task-item">
+
+                <div class="task-left">
+
+                    <h3>{{ task[2] }}</h3>
+
+                    <small>
+                        📅 Deadline: {{ task[4] }}
+                    </small>
+
+                    <br>
+
+                    {% if task[3] == 'completed' %}
+
+                    <span class="completed-badge">
+                        ✅ Completed
+                    </span>
+
+                    {% elif task[4] < today %} <span class="overdue-badge">
+                        ❌ Overdue
+                        </span>
+
+                        {% else %}
+
+                        <span class="pending-badge">
+                            ⏳ Pending
+                        </span>
+
+                        {% endif %}
+
+                </div>
+
+
+                <div class="task-actions">
+
                     {% if task[3] == 'pending' %}
-                        <a href="/complete/{{ task[0] }}">Done</a>
+                    <a href="/complete/{{ task[0] }}" class="done-btn">
+                        Done
+                    </a>
                     {% endif %}
-                    <a href="/delete/{{ task[0] }}">Delete</a>
-                </span>
-            </li>
-        {% endfor %}
-    </ul>
 
-</div>
+                    <a href="/delete/{{ task[0] }}" class="delete-btn">
+                        Delete
+                    </a>
+
+                </div>
+
+            </li>
+
+            {% endfor %}
+        </ul>
+
+    </div>
 
 
 </body>
+
 </html>
