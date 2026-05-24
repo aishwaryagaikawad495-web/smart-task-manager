@@ -38,6 +38,7 @@ Smart-Task-Manager/
 │   ├── tasks.html
 │   ├── admin.html
 │   ├── profile.html
+│   ├── base.html
 │
 ├── /static
 │   ├── style.css

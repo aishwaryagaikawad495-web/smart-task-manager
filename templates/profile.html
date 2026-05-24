@@ -8,22 +8,9 @@
 </head>
 
 <body>
+{% extends "base.html" %}
 
-    <nav>
-
-        <div class="logo">
-            Smart Task Manager
-        </div>
-
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/profile">Profile</a>
-            <a href="/tasks">Tasks</a>
-            <a href="/logout">Logout</a>
-        </div>
-
-    </nav>
-
+{% block content %}
     <div class="profile-container">
 
         <div class="profile-card">
@@ -154,7 +141,8 @@
         </div>
 
     </div>
-
+{% endblock %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
 </html>

@@ -150,11 +150,10 @@ def tasks():
     updated_tasks = []
 
     for task in data:
-
-        deadline_date = datetime.strptime(
-            task[4],
-            "%Y-%m-%d"
-    ).date()
+        try:
+            deadline_date = datetime.strptime(task[4], "%Y-%m-%d").date()
+        except:
+            deadline_date = None
 
         updated_tasks.append(
         (

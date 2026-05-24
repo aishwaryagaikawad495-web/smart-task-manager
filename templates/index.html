@@ -11,32 +11,11 @@
 
 <body>
 
-    <!-- Navbar -->
+    {% extends "base.html" %}
 
-    <nav>
+    {% block title %}Home{% endblock %}
 
-        <div class="logo">
-            Smart Task Manager
-        </div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-
-            {% if session.get('user') %}
-            <a href="/profile">Profile</a>
-            <a href="/tasks">Tasks</a>
-            <a href="/logout">Logout</a>
-
-
-            {% else %}
-            <a href="/login">Login</a>
-            <a href="/register">Register</a>
-
-            {% endif %}
-
-        </div>
-
-    </nav>
-
+    {% block content %}
     <!-- Hero Section -->
 
     <section class="hero">
@@ -88,8 +67,8 @@
         <p>© 2026 Smart Task Manager | All Rights Reserved</p>
 
     </footer>
-
-
+{% endblock %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
 </html>

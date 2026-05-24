@@ -1,3 +1,21 @@
+
+body,
+nav,
+.login-box,
+.feature-card,
+.task-item,
+.card,
+.stat-card,
+.extra-card,
+table,
+input,
+button {
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -132,7 +150,7 @@ footer {
 
 .login-page {
 
-    height: 100vh;
+    min-height: 100vh;
 
     display: flex;
     justify-content: center;
@@ -784,17 +802,6 @@ table th {
     font-size: 14px;
 }
 
-
-/* TASK ACTION BUTTONS */
-
-.task-actions {
-
-    display: flex;
-
-    gap: 10px;
-}
-
-
 /* BADGES */
 
 .completed-badge {
@@ -953,4 +960,176 @@ table th {
     display: flex;
     gap: 10px;
     align-items: center;
+}
+
+
+
+body.dark .task-list li {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+}
+
+body.dark {
+    background-color: #121212;
+    color: #f1f1f1;
+}
+
+body.dark nav {
+    background-color: #1f1f1f;
+}
+
+body.dark .login-box,
+body.dark .feature-card,
+body.dark .task-item,
+body.dark .card,
+body.dark .stat-card,
+body.dark .extra-card {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+}
+
+body.dark input,
+body.dark textarea {
+    background-color: #2a2a2a;
+    color: #fff;
+    border: 1px solid #444;
+}
+
+.dark-btn {
+    background: #00adb5;
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 15px;
+}
+
+.dark-btn:hover {
+    background: #007b80;
+}
+
+
+
+body.dark .flash-message {
+    background-color: #2a2a2a;
+    color: #f1f1f1;
+    border: 1px solid #444;
+}
+
+body.dark .error {
+    background-color: #3a1f1f;
+    color: #ff6b6b;
+    border: 1px solid #5a2a2a;
+}
+
+body.dark .success {
+    background-color: #1f3a2a;
+    color: #7CFF9E;
+    border: 1px solid #2a5a3a;
+}
+body.dark .role-badge {
+    background-color: #2a2a2a;
+    color: #00adb5;
+}
+body.dark .completed-badge {
+    background: #1f3a2a;
+    color: #7CFF9E;
+}
+
+body.dark .pending-badge {
+    background: #3a2f1f;
+    color: #ffcc66;
+}
+
+body.dark .overdue-badge {
+    background: #3a1f1f;
+    color: #ff6b6b;
+}
+body.dark .login-box h1,
+body.dark .login-text,
+body.dark .register-link {
+    color: #f1f1f1;
+}
+body.dark .hero h1,
+body.dark .hero p {
+    color: #f1f1f1;
+}
+body.dark .features {
+    background-color: #121212;
+}
+body.dark .tasks-page h1,
+body.dark .profile-top h1,
+body.dark .progress-header h3,
+body.dark .extra-card h3 {
+    color: #f1f1f1;
+}
+body.dark .task-left small {
+    color: #bdbdbd;
+}
+body.dark table {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+}
+
+body.dark table td {
+    border: 1px solid #444;
+}
+
+body.dark table th {
+    background-color: #00adb5;
+}
+body.dark footer {
+    background-color: #1f1f1f;
+}
+body.dark .task-item,
+body.dark .card,
+body.dark .profile-card,
+body.dark .login-box {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+body.dark .profile-card {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+}
+body.dark .profile-info,
+body.dark .info-row {
+    border-color: #444;
+}
+body.dark .nav-links a {
+    color: #f1f1f1;
+}
+body.dark .nav-links a:hover {
+    color: #00adb5;
+}
+button:active {
+    transform: scale(0.97);
+}
+body.dark .task-left h3 {
+    color: #f1f1f1;
+}
+html {
+    scroll-behavior: smooth;
+}
+button,
+.hero-btn,
+.done-btn,
+.delete-btn {
+    transition: all 0.3s ease;
+}
+input:focus,
+button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 173, 181, 0.5);
+}
+.feature-card:hover,
+.extra-card:hover,
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+body.dark .feature-card h3,
+body.dark .feature-card p {
+    color: #f1f1f1;
 }

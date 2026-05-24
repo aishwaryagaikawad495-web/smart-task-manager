@@ -9,27 +9,11 @@
 </head>
 
 <body>
-    <nav>
+    {% extends "base.html" %}
 
-        <div class="logo">
-            Smart Task Manager
-        </div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            {% if session.get('user') %}
-            <a href="/profile">Profile</a>
-            <a href="/tasks">Tasks</a>
-            <a href="/logout">Logout</a>
+{% block title %}Register{% endblock %}
 
-            {% else %}
-            <a href="/login">Login</a>
-            <a href="/register">Register</a>
-
-            {% endif %}
-
-        </div>
-
-    </nav>
+{% block content %}
     <div class="login-page">
 
         <div class="login-box">
@@ -86,7 +70,8 @@
             }
         });
     </script>
-
+{% endblock %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
 </html>

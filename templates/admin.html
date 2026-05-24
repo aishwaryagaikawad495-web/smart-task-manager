@@ -7,15 +7,9 @@
 </head>
 
 <body>
+{% extends "base.html" %}
 
-    <nav>
-        <div class="logo">Admin Dashboard</div>
-        <div class="nav-links">
-            <a href="/tasks">Tasks</a>
-            <a href="/profile">Profile</a>
-            <a href="/logout">Logout</a>
-        </div>
-    </nav>
+{% block content %}
 
     <div class="admin-container">
 
@@ -68,7 +62,8 @@
         </table>
 
     </div>
-
+{% endblock %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
 </html>
