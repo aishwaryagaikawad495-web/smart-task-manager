@@ -1,0 +1,44 @@
+
+    {% extends "base.html" %}
+
+    {% block title %}Edit Task{% endblock %}
+
+    {% block content %}
+
+    <div class="edit-page">
+
+        <div class="edit-box">
+
+            <h1>Edit Task</h1>
+
+            <form method="POST">
+
+                <input type="text" name="task" value="{{ task[2] }}" required>
+
+                <input type="date" name="deadline" value="{{ task[4] }}" required>
+                <select name="priority" required>
+
+                    <option value="High" {% if task[5]|lower == 'high' %}selected{% endif %}>
+                        🔴 High
+                    </option>
+
+                    <option value="Medium" {% if task[5]|lower == 'medium' %}selected{% endif %}>
+                        🟡 Medium
+                    </option>
+
+                    <option value="Low" {% if task[5]|lower == 'low' %}selected{% endif %}>
+                        🟢 Low
+                    </option>
+
+                </select>
+                <button type="submit">
+                    Update Task
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    {% endblock %}

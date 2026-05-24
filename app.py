@@ -27,7 +27,8 @@ c.execute("""
         username TEXT,
         task TEXT,
         status TEXT DEFAULT 'pending',
-        deadline TEXT
+        deadline TEXT,
+        priority TEXT DEFAULT 'Medium'
     )
     """)
 
@@ -134,9 +135,10 @@ def tasks():
         task = request.form['task']
         deadline = request.form['deadline']
         username = session['user']
+        priority = request.form["priority"]
 
-        c.execute("INSERT INTO tasks (username, task,deadline) VALUES (?, ?,?)",
-                  (username, task,deadline))
+        c.execute("INSERT INTO tasks (username, task,deadline,priority) VALUES (?, ?,?,?)",
+                  (username, task,deadline,priority))
         conn.commit()
 
     #  Show tasks for logged-in user
@@ -157,15 +159,15 @@ def tasks():
 
         updated_tasks.append(
         (
-            task[0],
-            task[1],
-            task[2],
-            task[3],
-            deadline_date
+            task[0],#id
+            task[1],#username
+            task[2],#task
+            task[3],#status
+            deadline_date,
+            task[5] #priority
         )
     )
     return render_template('tasks.html', tasks=updated_tasks,today=today)
-
 
 
 @app.route('/complete/<int:id>')
@@ -326,6 +328,42 @@ def get_started():
         return redirect('/tasks')
 
     return redirect('/register')
+
+
+
+
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+def edit_task(id):
+
+    conn = sqlite3.connect("data.db")
+    c = conn.cursor()
+
+    if request.method == "POST":
+
+        updated_task = request.form["task"]
+        updated_deadline = request.form["deadline"]
+        updated_priority = request.form["priority"]
+
+        c.execute(
+            "UPDATE tasks SET task=?, deadline=?, priority=? WHERE id=?",
+            (updated_task, updated_deadline,updated_priority, id)
+        )
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/tasks")
+
+    c.execute("SELECT * FROM tasks WHERE id=?", (id,))
+    task = c.fetchone()
+
+    conn.close()
+
+    return render_template("edit_task.html", task=task)
+
+
+
+
 
 
 @app.route('/logout')

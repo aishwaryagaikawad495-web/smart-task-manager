@@ -15,6 +15,7 @@ Users can register, login, manage tasks, and admins can monitor all tasks throug
 -Flash messages
 -Create, Read, Update, Delete (CRUD) Tasks
 -Task deadlines support
+-Dark mode support
 
 # Tech Stack
 - Python 

@@ -1,18 +1,7 @@
-<!DOCTYPE html>
-<html>
 
-<head>
-    <title>Tasks</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-
-<body>
-
-{% extends "base.html" %}
-
-{% block title %}Tasks{% endblock %}
-
-{% block content %}
+    {% extends "base.html" %}
+    {% block title %}Tasks{% endblock %}
+    {% block content %}
 
     <div class="tasks-page">
 
@@ -22,6 +11,11 @@
         <form method="POST" action="/tasks" class="task-form">
             <input type="text" name="task" placeholder="Enter new task" required>
             <input type="date" name="deadline" required>
+            <select name="priority" required>
+                <option value="High">🔴 High</option>
+                <option value="Medium">🟡 Medium</option>
+                <option value="Low">🟢 Low</option>
+            </select>
             <button type="submit">Add Task</button>
         </form>
 
@@ -39,7 +33,7 @@
                     </small>
 
                     <br>
-
+                    <div class="task-badges">
                     {% if task[3] == 'completed' %}
 
                     <span class="completed-badge">
@@ -58,6 +52,26 @@
 
                         {% endif %}
 
+                        {% if task[5]|lower == 'high' %}
+
+                        <span class="high-priority">
+                            🔴 High Priority
+                        </span>
+
+                        {% elif task[5]|lower == 'medium' %}
+
+                        <span class="medium-priority">
+                            🟡 Medium Priority
+                        </span>
+
+                        {% else %}
+
+                        <span class="low-priority">
+                            🟢 Low Priority
+                        </span>
+
+                        {% endif %}
+                        </div>
                 </div>
 
 
@@ -68,22 +82,16 @@
                         Done
                     </a>
                     {% endif %}
-
+                    <a href="/edit/{{ task[0] }}" class="edit-btn">
+                        Edit
+                    </a>
                     <a href="/delete/{{ task[0] }}" class="delete-btn">
                         Delete
                     </a>
 
                 </div>
-
             </li>
-
             {% endfor %}
         </ul>
-
     </div>
-
-{% endblock %}
-<script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
-
-</html>
+    {% endblock %}

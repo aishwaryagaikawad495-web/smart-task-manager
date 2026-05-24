@@ -144,116 +144,76 @@ footer {
     padding: 20px;
 }
 
-
-
 /* Login Page */
-
 .login-page {
-
     min-height: 100vh;
-
     display: flex;
     justify-content: center;
-    align-items: center;
-
+    align-items: flex-start;
+    padding-top: 80px;
     background-color: #f4f7fb;
 }
-
 .login-box {
-
     background-color: white;
-
     width: 400px;
-
     padding: 40px;
-
     border-radius: 15px;
-
     text-align: center;
-
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
 .login-box h1 {
-
     margin-bottom: 10px;
-
     color: #222;
 }
 
 .login-text {
-
     margin-bottom: 30px;
-
     color: #666;
-
     font-size: 15px;
 }
 
 .login-box form {
-
     display: flex;
-
     flex-direction: column;
 }
 
 .login-box input {
-
     padding: 14px;
-
     margin-bottom: 20px;
-
     border: 1px solid #ccc;
-
     border-radius: 8px;
-
     font-size: 15px;
 }
 
 .login-box input:focus {
-
     outline: none;
-
     border-color: #00adb5;
 }
 
 .login-box button {
-
     padding: 14px;
-
     border: none;
-
     background-color: #00adb5;
-
     color: white;
-
     font-size: 16px;
-
     border-radius: 8px;
-
     cursor: pointer;
-
     transition: 0.3s;
 }
 
 .login-box button:hover {
-
     background-color: #007b80;
 }
 
 .register-link {
-
     margin-top: 20px;
-
     color: #555;
 }
 
 .register-link a {
-
     color: #00adb5;
-
     text-decoration: none;
-
     font-weight: bold;
 }
 
@@ -262,24 +222,16 @@ footer {
 /* Password Box */
 
 .password-box {
-
     position: relative;
-
     width: 100%;
-
     margin-bottom: 20px;
 }
 
 .password-box input {
-
     width: 100%;
-
     padding: 14px 50px 14px 14px;
-
     border: 1px solid #ccc;
-
     border-radius: 8px;
-
     font-size: 15px;
 }
 
@@ -316,7 +268,6 @@ footer {
 
 
 /* TASK PAGE */
-
 .tasks-page {
     padding: 40px;
     text-align: center;
@@ -358,17 +309,6 @@ footer {
     margin: auto;
 }
 
-.task-list li {
-    background: white;
-    margin: 10px 0;
-    padding: 15px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
 .task-list a {
     margin-left: 10px;
     text-decoration: none;
@@ -382,7 +322,6 @@ footer {
 
 
 /* ADMIN DASHBOARD */
-
 .admin-container {
     padding: 40px;
     text-align: center;
@@ -438,9 +377,6 @@ table th {
     color: white;
 }
 
-
-
-
 .error {
     background-color: #ffdddd;
     color: red;
@@ -459,60 +395,41 @@ table th {
 
 
 /* PROFILE PAGE */
-
 .profile-container {
-
     min-height: 90vh;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     padding: 40px 20px;
 }
 
 .profile-card {
-
     width: 100%;
     max-width: 750px;
-
     background: white;
-
     padding: 40px;
-
     border-radius: 20px;
-
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 
 /* TOP SECTION */
-
 .profile-top {
-
     display: flex;
     align-items: center;
-
     gap: 25px;
-
     margin-bottom: 40px;
 }
 
 .profile-avatar {
-
     width: 90px;
     height: 90px;
-
     border-radius: 50%;
-
     background: linear-gradient(135deg, #00adb5, #007b80);
-
     color: white;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     font-size: 35px;
     font-weight: bold;
 }
@@ -524,227 +441,151 @@ table th {
 }
 
 .role-badge {
-
     display: inline-block;
-
     background: #d6f5f6;
-
     color: #007b80;
-
     padding: 6px 14px;
-
     border-radius: 20px;
-
     font-size: 14px;
-
     text-transform: capitalize;
 }
 
 
 /* STATS */
-
 .profile-stats {
-
     display: flex;
-
     gap: 20px;
-
     flex-wrap: wrap;
-
     margin-bottom: 35px;
 }
 
 .stat-card {
-
     flex: 1;
-
     min-width: 180px;
-
     background: #f7f7f7;
-
     padding: 25px;
-
     border-radius: 15px;
-
     text-align: center;
-
     transition: 0.3s;
 }
 
 .stat-card:hover {
-
     transform: translateY(-5px);
 }
 
 .stat-card h2 {
-
     font-size: 35px;
-
     color: #00adb5;
-
     margin-bottom: 10px;
 }
 
 .stat-card p {
-
     color: #555;
 }
 
-
 /* INFO SECTION */
-
 .profile-info {
-
     border-top: 1px solid #ddd;
-
     padding-top: 20px;
 }
 
 .info-row {
-
     display: flex;
     justify-content: space-between;
-
     padding: 14px 0;
-
     border-bottom: 1px solid #eee;
 }
 
 .info-row span {
-
     color: #666;
 }
 
 .info-row strong {
-
     color: #222;
 }
 
-
 /* RESPONSIVE */
-
 @media(max-width:768px) {
-
     .profile-top {
-
         flex-direction: column;
-
         text-align: center;
     }
-
     .profile-stats {
-
         flex-direction: column;
     }
-
     .info-row {
-
         flex-direction: column;
-
         gap: 5px;
     }
-
 }
 
 
 /* PROGRESS SECTION */
-
 .progress-section {
-
     margin-bottom: 35px;
 }
 
 .progress-header {
-
     display: flex;
     justify-content: space-between;
-
     margin-bottom: 10px;
 }
 
 .progress-header h3 {
-
     color: #222;
 }
 
 .progress-bar {
-
     width: 100%;
-
     height: 14px;
-
     background: #e5e7eb;
-
     border-radius: 20px;
-
     overflow: hidden;
 }
 
 .progress-fill {
-
     height: 100%;
     width: var(--progress);
     background: linear-gradient(90deg,
             #00adb5,
             #007b80);
-
     border-radius: 20px;
 }
 
 
 /* EXTRA SECTION */
-
 .extra-section {
-
     display: flex;
-
     gap: 20px;
-
     margin-top: 30px;
-
     flex-wrap: wrap;
 }
 
 .extra-card {
-
     flex: 1;
-
     min-width: 220px;
-
     background: #f7f7f7;
-
     padding: 25px;
-
     border-radius: 15px;
 }
 
 .extra-card h3 {
-
     margin-bottom: 10px;
-
     color: #222;
 }
 
 .extra-card p {
-
     color: #555;
-
     font-size: 17px;
 }
 
 
 .hero-btn {
-
     padding: 12px 25px;
-
     background-color: #00adb5;
-
     color: white;
-
     text-decoration: none;
-
     border-radius: 5px;
-
     display: inline-block;
 }
 
@@ -752,112 +593,83 @@ table th {
 
 /* TASK DEADLINE UI */
 
+.task-badges {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
 .task-item {
-
     background: white;
-
-    margin: 15px 0;
-
-    padding: 20px;
-
-    border-radius: 16px;
+    margin: 18px 0;
+    padding: 22px;
+    border-radius: 18px;
 
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
+    gap: 20px;
 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    border: 1px solid #f0f0f0;
 
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
 .task-item:hover {
-
     transform: translateY(-3px);
-
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
 
 .task-left {
-
     text-align: left;
 }
 
 .task-left h3 {
-
-    margin-bottom: 8px;
-
+    margin-bottom: 10px;
     color: #222;
-
-    font-size: 20px;
+    font-size: 22px;
+    font-weight: 600;
 }
 
 .task-left small {
-
     color: #666;
-
     font-size: 14px;
 }
 
 /* BADGES */
-
 .completed-badge {
-
     display: inline-block;
-
     margin-top: 10px;
-
     background: #ddffdd;
-
     color: green;
-
     padding: 6px 12px;
-
     border-radius: 20px;
-
     font-size: 14px;
-
     font-weight: bold;
 }
 
 .pending-badge {
-
     display: inline-block;
-
     margin-top: 10px;
-
     background: #fff4d6;
-
     color: #cc8800;
-
     padding: 6px 12px;
-
     border-radius: 20px;
-
     font-size: 14px;
-
     font-weight: bold;
 }
 
 .overdue-badge {
-
     display: inline-block;
-
     margin-top: 10px;
-
     background: #ffe5e5;
-
     color: red;
-
     padding: 6px 12px;
-
     border-radius: 20px;
-
     font-size: 14px;
-
     font-weight: bold;
 }
 
@@ -865,59 +677,40 @@ table th {
 /* DEADLINE INPUT */
 
 .task-form input[type="date"] {
-
     padding: 12px;
-
     border: 1px solid #ccc;
-
     border-radius: 8px;
-
     margin-left: 10px;
 }
 
-
 /* MOBILE RESPONSIVE */
-
 @media(max-width:768px) {
-
     .task-item {
-
         flex-direction: column;
-
         align-items: flex-start;
-
         gap: 15px;
     }
-
     .task-actions {
-
         width: 100%;
     }
 
     .done-btn,
     .delete-btn {
-
         flex: 1;
-
         text-align: center;
     }
 
     .task-form {
-
         display: flex;
-
         flex-direction: column;
-
         gap: 12px;
     }
 
     .task-form input {
-
         width: 100%;
     }
 
     .task-form button {
-
         width: 100%;
     }
 }
@@ -960,6 +753,7 @@ table th {
     display: flex;
     gap: 10px;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 
@@ -1009,8 +803,6 @@ body.dark textarea {
 .dark-btn:hover {
     background: #007b80;
 }
-
-
 
 body.dark .flash-message {
     background-color: #2a2a2a;
@@ -1132,4 +924,202 @@ button:focus {
 body.dark .feature-card h3,
 body.dark .feature-card p {
     color: #f1f1f1;
+}
+
+.task-actions .edit-btn {
+    background-color: #ffc107;
+    color: black;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.task-actions .edit-btn:hover {
+    background-color: #e0a800;
+    transform: translateY(-2px);
+}
+
+body.dark .task-actions .edit-btn {
+    background-color: #d39e00;
+    color: #ffffff;
+}
+
+body.dark .task-actions .edit-btn:hover {
+    background-color: #b8860b;
+    transform: translateY(-2px);
+}
+/* Dark mode */
+body.dark .task-form select {
+    background-color: #2a2a2a;
+    color: white;
+    border: 1px solid #444;
+}
+.high-priority,
+.medium-priority,
+.low-priority {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* HIGH */
+.high-priority {
+    background-color: #ffe5e5;
+    color: #ff0000;
+}
+
+/* MEDIUM */
+.medium-priority {
+    background-color: #fff4d6;
+    color: #cc8800;
+}
+
+/* LOW */
+.low-priority {
+    background-color: #ddffdd;
+    color: green;
+}
+
+/* DARK MODE */
+body.dark .high-priority {
+    background-color: #3a1f1f;
+    color: #ff6b6b;
+}
+
+body.dark .medium-priority {
+    background-color: #3a2f1f;
+    color: #ffcc66;
+}
+
+body.dark .low-priority {
+    background-color: #1f3a2a;
+    color: #7CFF9E;
+}
+
+select {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+select:hover {
+    border-color: #00adb5;
+}
+
+select:focus {
+    outline: none;
+    border-color: #00adb5;
+    box-shadow: 0 0 5px rgba(0, 173, 181, 0.4);
+}
+
+body.dark select {
+    background-color: #2a2a2a;
+    color: white;
+    border: 1px solid #444;
+}
+
+.edit-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 100px 20px 60px;
+    background: linear-gradient(135deg, #f4f7fb, #eaf6f6);
+}
+
+/* Card */
+.edit-box {
+    width: 420px;
+    background: #ffffff;
+    padding: 45px;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+/* Title */
+.edit-box h2 {
+    margin-bottom: 20px;
+    color: #222;
+    font-size: 24px;
+}
+
+/* Inputs + Select */
+.edit-box input,
+.edit-box select {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 13px 14px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 15px;
+    transition: 0.3s;
+    background: #fff;
+}
+
+/* Focus effect */
+.edit-box input:focus,
+.edit-box select:focus {
+    border-color: #00adb5;
+    box-shadow: 0 0 8px rgba(0, 173, 181, 0.25);
+    outline: none;
+}
+
+/* Button */
+.edit-box button {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(90deg, #00adb5, #007b80);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.edit-box button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 173, 181, 0.25);
+}
+
+.edit-box small {
+    display: block;
+    margin-bottom: 15px;
+    color: #666;
+}
+body.dark .edit-page {
+    background: #121212;
+}
+
+body.dark .edit-box {
+    background: #1e1e1e;
+    color: white;
+}
+
+body.dark .edit-box h2 {
+    color: #f1f1f1;
+}
+
+body.dark .edit-box input,
+body.dark .edit-box select {
+    background: #2a2a2a;
+    color: white;
+    border: 1px solid #444;
+}
+
+body.dark .edit-box button {
+    background: linear-gradient(90deg, #00adb5, #007b80);
 }
