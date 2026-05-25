@@ -16,6 +16,9 @@ Users can register, login, manage tasks, and admins can monitor all tasks throug
 -Create, Read, Update, Delete (CRUD) Tasks
 -Task deadlines support
 -Dark mode support
+-Edit existing tasks
+- Weekly Productivity Analytics
+-PDF Report Download
 
 # Tech Stack
 - Python 
@@ -24,6 +27,9 @@ Users can register, login, manage tasks, and admins can monitor all tasks throug
 - HTML5
 - CSS3
 - JavaScript
+-Jinja2
+- ReportLab
+
 
 # Project Structure
 Smart-Task-Manager/
@@ -40,6 +46,8 @@ Smart-Task-Manager/
 │   ├── admin.html
 │   ├── profile.html
 │   ├── base.html
+|   ├── edit_task.html
+|   ├── weekly_report.html
 │
 ├── /static
 │   ├── style.css

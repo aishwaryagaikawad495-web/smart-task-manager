@@ -1123,3 +1123,250 @@ body.dark .edit-box select {
 body.dark .edit-box button {
     background: linear-gradient(90deg, #00adb5, #007b80);
 }
+
+
+/* WEEKLY REPORT PAGE */
+
+.weekly-report-page {
+    padding: 40px;
+    min-height: 100vh;
+}
+
+.weekly-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.weekly-header h1 {
+    font-size: 38px;
+    margin-bottom: 10px;
+    color: #222;
+}
+
+.weekly-header p {
+    color: #666;
+    font-size: 17px;
+}
+
+/* TOP STATS */
+
+.weekly-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 20px;
+    margin-bottom: 35px;
+}
+
+.weekly-card {
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.weekly-card:hover {
+    transform: translateY(-5px);
+}
+
+.weekly-card h2 {
+    font-size: 40px;
+    color: #00adb5;
+    margin-bottom: 10px;
+}
+
+.weekly-card p {
+    color: #555;
+}
+
+/* PRODUCTIVITY */
+
+.analytics-box {
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    margin-bottom: 35px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.analytics-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.analytics-header h3 {
+    color: #222;
+}
+
+.analytics-header span {
+    color: #00adb5;
+    font-weight: bold;
+}
+
+.analytics-progress {
+    width: 100%;
+    height: 16px;
+    background: #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.analytics-fill {
+    height: 100%;
+    background: linear-gradient(90deg,#00adb5,#007b80);
+    border-radius: 20px;
+}
+
+/* REPORT SECTION */
+
+.report-section {
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    margin-bottom: 35px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.report-section h2 {
+    margin-bottom: 25px;
+    color: #222;
+}
+
+/* CHART */
+
+.chart-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    gap: 20px;
+    height: 260px;
+}
+
+.chart-bar-box {
+    text-align: center;
+}
+
+.chart-bar {
+    width: 45px;
+    background: linear-gradient(180deg,#00adb5,#007b80);
+    border-radius: 10px 10px 0 0;
+    transition: 0.3s;
+}
+
+.chart-bar:hover {
+    transform: scaleY(1.05);
+}
+
+/* PRIORITY REPORT */
+
+.priority-report {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.priority-box {
+    flex: 1;
+    min-width: 220px;
+    padding: 30px;
+    border-radius: 18px;
+    text-align: center;
+}
+
+.priority-box h3 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.high-box {
+    background: #ffe5e5;
+    color: #ff0000;
+}
+
+.medium-box {
+    background: #fff4d6;
+    color: #cc8800;
+}
+
+.low-box {
+    background: #ddffdd;
+    color: green;
+}
+
+/* ADVANCED ANALYTICS */
+
+.advanced-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+    gap: 20px;
+    margin-bottom: 35px;
+}
+
+.advanced-card {
+    background: white;
+    padding: 28px;
+    border-radius: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.advanced-card h3 {
+    margin-bottom: 12px;
+    color: #222;
+}
+
+.advanced-card p {
+    color: #555;
+    font-size: 18px;
+}
+
+/* DOWNLOAD BUTTON */
+
+.download-report {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.download-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    background: linear-gradient(90deg,#00adb5,#007b80);
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.download-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,173,181,0.25);
+}
+
+/* DARK MODE */
+
+body.dark .weekly-header h1,
+body.dark .report-section h2,
+body.dark .advanced-card h3,
+body.dark .analytics-header h3 {
+    color: #f1f1f1;
+}
+
+body.dark .weekly-header p,
+body.dark .advanced-card p,
+body.dark .weekly-card p {
+    color: #bdbdbd;
+}
+
+body.dark .weekly-card,
+body.dark .analytics-box,
+body.dark .report-section,
+body.dark .advanced-card {
+    background: #1e1e1e;
+    color: white;
+}
+
+body.dark .analytics-progress {
+    background: #2a2a2a;
+}

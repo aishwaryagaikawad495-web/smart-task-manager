@@ -1,15 +1,29 @@
-from flask import Flask, render_template, session,redirect,request,flash
-from datetime import datetime
+from flask import Flask, render_template, session,redirect,request,flash, send_file
+from datetime import datetime,timedelta
+from collections import Counter
+from reportlab.pdfgen import canvas
+
+from io import BytesIO
+
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle
+)
+
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import letter
 
 app = Flask(__name__)
 app.secret_key="mysecretkey"
 
-
 import sqlite3
 
-conn = sqlite3.connect("data.db")
-c = conn.cursor()
-
+with sqlite3.connect("data.db") as conn:
+    c = conn.cursor()
 
 #user table
 c.execute("""
@@ -28,7 +42,9 @@ c.execute("""
         task TEXT,
         status TEXT DEFAULT 'pending',
         deadline TEXT,
-        priority TEXT DEFAULT 'Medium'
+        priority TEXT DEFAULT 'Medium',
+        created_at TEXT,
+        completed_at TEXT
     )
     """)
 
@@ -137,8 +153,14 @@ def tasks():
         username = session['user']
         priority = request.form["priority"]
 
-        c.execute("INSERT INTO tasks (username, task,deadline,priority) VALUES (?, ?,?,?)",
-                  (username, task,deadline,priority))
+        created_at = datetime.now().strftime("%Y-%m-%d")
+
+        c.execute("""
+            INSERT INTO tasks
+            (username, task, deadline, priority, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (username, task, deadline, priority, created_at))
         conn.commit()
 
     #  Show tasks for logged-in user
@@ -154,7 +176,7 @@ def tasks():
     for task in data:
         try:
             deadline_date = datetime.strptime(task[4], "%Y-%m-%d").date()
-        except:
+        except ValueError:
             deadline_date = None
 
         updated_tasks.append(
@@ -178,10 +200,19 @@ def complete_task(id):
     conn = sqlite3.connect("data.db")
     c = conn.cursor()
 
-    c.execute(
-    "UPDATE tasks SET status='completed' WHERE id=? AND username=?",
-    (id, session['user'])
-)
+    # c.execute(
+    # "UPDATE tasks SET status='completed' WHERE id=? AND username=?",
+    # (id, session['user'])
+    completed_at = datetime.now().strftime("%Y-%m-%d")
+
+    c.execute("""
+        UPDATE tasks
+        SET status='completed',
+        completed_at=?
+        WHERE id=? AND username=?
+        """,
+        (completed_at, id, session['user'])
+    )
 
     conn.commit()
     conn.close()
@@ -333,8 +364,10 @@ def get_started():
 
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
-def edit_task(id):
 
+def edit_task(id):
+    if 'user' not in session:
+        return redirect('/login')
     conn = sqlite3.connect("data.db")
     c = conn.cursor()
 
@@ -345,8 +378,12 @@ def edit_task(id):
         updated_priority = request.form["priority"]
 
         c.execute(
-            "UPDATE tasks SET task=?, deadline=?, priority=? WHERE id=?",
-            (updated_task, updated_deadline,updated_priority, id)
+            """
+            UPDATE tasks
+            SET task=?, deadline=?, priority=?
+            WHERE id=? AND username=?
+            """,
+            (updated_task, updated_deadline, updated_priority, id, session['user'])
         )
 
         conn.commit()
@@ -354,7 +391,10 @@ def edit_task(id):
 
         return redirect("/tasks")
 
-    c.execute("SELECT * FROM tasks WHERE id=?", (id,))
+    c.execute(
+        "SELECT * FROM tasks WHERE id=? AND username=?",
+        (id, session['user'])
+    )
     task = c.fetchone()
 
     conn.close()
@@ -362,7 +402,396 @@ def edit_task(id):
     return render_template("edit_task.html", task=task)
 
 
+@app.route('/weekly-report')
+def weekly_report():
 
+    if 'user' not in session:
+        return redirect('/login')
+
+    conn = sqlite3.connect("data.db")
+    c = conn.cursor()
+
+    username = session['user']
+
+    # Get all tasks of user
+    c.execute(
+        "SELECT * FROM tasks WHERE username=?",
+        (username,)
+    )
+
+    tasks = c.fetchall()
+
+    conn.close()
+
+    total_tasks = len(tasks)
+
+    completed_tasks = 0
+    pending_tasks = 0
+    overdue_tasks = 0
+
+    high_priority = 0
+    medium_priority = 0
+    low_priority = 0
+
+    today = datetime.now().date()
+
+    completed_days = []
+    
+    weekly_chart = {
+        "Mon": 0,
+        "Tue": 0,
+        "Wed": 0,
+        "Thu": 0,
+        "Fri": 0,
+        "Sat": 0,
+        "Sun": 0
+    }
+
+    for task in tasks:
+        status = task[3]
+        deadline = task[4]
+        priority = task[5]
+
+        # Completed / Pending
+        if status == "completed":
+            completed_tasks += 1
+        else:
+            pending_tasks += 1
+
+        # Overdue
+        if deadline and status != "completed":
+
+            try:
+                deadline_date = datetime.strptime(
+                    deadline,
+                    "%Y-%m-%d"
+                ).date()
+
+                if deadline_date < today:
+                    overdue_tasks += 1
+
+            except ValueError:
+                pass
+
+        # Priority Count
+        if priority == "High":
+            high_priority += 1
+
+        elif priority == "Medium":
+            medium_priority += 1
+
+        elif priority == "Low":
+            low_priority += 1
+
+        # Weekly chart
+        # if status == "completed" and deadline:
+        completed_at = task[7]
+
+        if status == "completed" and completed_at:
+
+            try:
+                date_obj = datetime.strptime(
+                    completed_at,
+                    "%Y-%m-%d"
+                )
+
+                day_name = date_obj.strftime("%a")
+
+                if day_name in weekly_chart:
+                    weekly_chart[day_name] += 1
+
+                completed_days.append(day_name)
+
+            except ValueError:
+                pass
+
+    # Productivity
+    if total_tasks > 0:
+        productivity = int(
+            (completed_tasks / total_tasks) * 100
+        )
+    else:
+        productivity = 0
+
+    # Most productive day
+    if completed_days:
+        most_productive_day = Counter(
+            completed_days
+        ).most_common(1)[0][0]
+    else:
+        most_productive_day = "No Data"
+
+
+    completion_streak = 0
+    sorted_dates = []
+
+    for task in tasks:
+
+        completed_at = task[7]
+
+        if completed_at:
+
+            try:
+
+                completed_date = datetime.strptime(
+                completed_at,
+                "%Y-%m-%d"
+                ).date()
+
+                sorted_dates.append(completed_date)
+
+            except ValueError:
+                pass
+
+    sorted_dates = sorted(set(sorted_dates), reverse=True)
+
+    current_day = today
+
+    for d in sorted_dates:
+
+        if d == current_day:
+
+            completion_streak += 1
+            current_day = current_day - timedelta(days=1)
+
+        else:
+            break
+
+    completion_durations = []
+
+    for task in tasks:
+
+        created_at = task[6]
+        completed_at = task[7]
+
+        if created_at and completed_at:
+
+            try:
+
+                    created_date = datetime.strptime(
+                    created_at,
+                "%Y-%m-%d"
+            )
+
+                    completed_date = datetime.strptime(
+                completed_at,
+                "%Y-%m-%d"
+            )
+
+                    diff = (
+                completed_date - created_date
+            ).days
+
+                    completion_durations.append(diff)
+
+            except ValueError:
+                pass
+
+    if completion_durations:
+
+        avg_days = sum(completion_durations) / len(completion_durations)
+
+        avg_completion_time = f"{round(avg_days, 1)} Days"
+
+    else:
+
+        avg_completion_time = "0 Days"
+    
+
+    # Overdue %
+    if total_tasks > 0:
+        overdue_percentage = int(
+            (overdue_tasks / total_tasks) * 100
+        )
+    else:
+        overdue_percentage = 0
+    return render_template(
+
+        "weekly_report.html",
+
+        total_tasks=total_tasks,
+        completed_tasks=completed_tasks,
+        pending_tasks=pending_tasks,
+        overdue_tasks=overdue_tasks,
+
+        productivity=productivity,
+
+        weekly_chart=weekly_chart,
+
+        high_priority=high_priority,
+        medium_priority=medium_priority,
+        low_priority=low_priority,
+
+        most_productive_day=most_productive_day,
+
+        completion_streak=completion_streak,
+
+        avg_completion_time=avg_completion_time,
+
+        overdue_percentage=overdue_percentage
+    )
+
+ 
+
+
+@app.route('/download-report')
+def download_report():
+
+    if 'user' not in session:
+        return redirect('/login')
+
+    conn = sqlite3.connect("data.db")
+    c = conn.cursor()
+
+    username = session['user']
+
+    c.execute(
+        "SELECT * FROM tasks WHERE username=?",
+        (username,)
+    )
+
+    tasks = c.fetchall()
+
+    conn.close()
+
+    total_tasks = len(tasks)
+
+    completed_tasks = 0
+    pending_tasks = 0
+    overdue_tasks = 0
+
+    today = datetime.now().date()
+
+    for task in tasks:
+
+        status = task[3]
+        deadline = task[4]
+
+        if status == 'completed':
+            completed_tasks += 1
+        else:
+            pending_tasks += 1
+
+        if deadline and status != 'completed':
+
+            try:
+                deadline_date = datetime.strptime(
+                    deadline,
+                    "%Y-%m-%d"
+                ).date()
+
+                if deadline_date < today:
+                    overdue_tasks += 1
+
+            except ValueError:
+                pass
+
+    if total_tasks > 0:
+        productivity = int(
+            (completed_tasks / total_tasks) * 100
+        )
+    else:
+        productivity = 0
+
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter
+    )
+
+    styles = getSampleStyleSheet()
+
+    elements = []
+
+    # Title
+    title = Paragraph(
+        "<b>Smart Task Manager - Weekly Productivity Report</b>",
+        styles['Title']
+    )
+
+    elements.append(title)
+    elements.append(Spacer(1, 20))
+
+    # User Details
+    user_info = Paragraph(
+        f"<b>Username:</b> {username}",
+        styles['Normal']
+    )
+
+    elements.append(user_info)
+    elements.append(Spacer(1, 20))
+
+    # Summary Table
+    summary_data = [
+        ['Metric', 'Value'],
+        ['Total Tasks', total_tasks],
+        ['Completed Tasks', completed_tasks],
+        ['Pending Tasks', pending_tasks],
+        ['Overdue Tasks', overdue_tasks],
+        ['Productivity', f'{productivity}%']
+    ]
+
+    summary_table = Table(summary_data, colWidths=[250, 200])
+
+    summary_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige)
+    ]))
+
+    elements.append(summary_table)
+    elements.append(Spacer(1, 30))
+
+    # Task Table Heading
+    task_heading = Paragraph(
+        "<b>Task Details</b>",
+        styles['Heading2']
+    )
+
+    elements.append(task_heading)
+    elements.append(Spacer(1, 10))
+
+    # Task Table
+    task_data = [
+        ['Task', 'Status', 'Priority', 'Deadline']
+    ]
+
+    for task in tasks:
+
+        task_data.append([
+            task[2],
+            task[3],
+            task[5],
+            task[4]
+        ])
+
+    task_table = Table(task_data, colWidths=[220, 100, 100, 100])
+
+    task_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.green),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke)
+    ]))
+
+    elements.append(task_table)
+
+    # Build PDF
+    doc.build(elements)
+
+    buffer.seek(0)
+
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name='Weekly_Report.pdf',
+        mimetype='application/pdf'
+    )
 
 
 
