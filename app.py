@@ -1,7 +1,6 @@
 from flask import Flask, render_template, session,redirect,request,flash, send_file
 from datetime import datetime,timedelta
 from collections import Counter
-from reportlab.pdfgen import canvas
 
 from io import BytesIO
 
@@ -447,6 +446,7 @@ def weekly_report():
         "Sun": 0
     }
 
+
     for task in tasks:
         status = task[3]
         deadline = task[4]
@@ -484,7 +484,6 @@ def weekly_report():
             low_priority += 1
 
         # Weekly chart
-        # if status == "completed" and deadline:
         completed_at = task[7]
 
         if status == "completed" and completed_at:
@@ -505,6 +504,8 @@ def weekly_report():
             except ValueError:
                 pass
 
+    weekly_values = list(weekly_chart.values())
+    total_week_activity = sum(weekly_values)
     # Productivity
     if total_tasks > 0:
         productivity = int(
@@ -512,6 +513,14 @@ def weekly_report():
         )
     else:
         productivity = 0
+
+
+    if productivity >= 80:
+        insight = "🔥 Excellent Productivity"
+    elif productivity >= 50:
+        insight = "👍 Good Performance"
+    else:
+        insight = "⚠️ Needs Improvement"
 
     # Most productive day
     if completed_days:
@@ -628,11 +637,246 @@ def weekly_report():
 
         avg_completion_time=avg_completion_time,
 
-        overdue_percentage=overdue_percentage
+        overdue_percentage=overdue_percentage,
+        weekly_values=weekly_values,
+        total_week_activity=total_week_activity,
+        insight=insight
     )
 
  
 
+
+# @app.route('/download-report')
+# def download_report():
+
+#     if 'user' not in session:
+#         return redirect('/login')
+
+#     conn = sqlite3.connect("data.db")
+#     c = conn.cursor()
+
+#     username = session['user']
+
+#     c.execute(
+#         "SELECT * FROM tasks WHERE username=?",
+#         (username,)
+#     )
+
+#     tasks = c.fetchall()
+
+#     conn.close()
+
+#     total_tasks = len(tasks)
+
+#     completed_tasks = 0
+#     pending_tasks = 0
+#     overdue_tasks = 0
+
+#     today = datetime.now().date()
+
+#     for task in tasks:
+
+#         status = task[3]
+#         deadline = task[4]
+
+#         if status == 'completed':
+#             completed_tasks += 1
+#         else:
+#             pending_tasks += 1
+
+#         if deadline and status != 'completed':
+
+#             try:
+#                 deadline_date = datetime.strptime(
+#                     deadline,
+#                     "%Y-%m-%d"
+#                 ).date()
+
+#                 if deadline_date < today:
+#                     overdue_tasks += 1
+
+#             except ValueError:
+#                 pass
+
+#     if total_tasks > 0:
+#         productivity = int(
+#             (completed_tasks / total_tasks) * 100
+#         )
+#     else:
+#         productivity = 0
+
+#     buffer = BytesIO()
+
+#     doc = SimpleDocTemplate(
+#         buffer,
+#         pagesize=letter
+#     )
+
+#     styles = getSampleStyleSheet()
+
+#     elements = []
+
+#     # Title
+#     title = Paragraph(
+#         "<b>Smart Task Manager - Weekly Productivity Report</b>",
+#         styles['Title']
+#     )
+
+#     elements.append(title)
+#     elements.append(Spacer(1, 20))
+
+#     # User Details
+#     user_info = Paragraph(
+#         f"<b>Username:</b> {username}",
+#         styles['Normal']
+#     )
+
+#     elements.append(user_info)
+#     elements.append(Spacer(1, 20))
+
+#     # Summary Table
+#     summary_data = [
+#         ['Metric', 'Value'],
+#         ['Total Tasks', total_tasks],
+#         ['Completed Tasks', completed_tasks],
+#         ['Pending Tasks', pending_tasks],
+#         ['Overdue Tasks', overdue_tasks],
+#         ['Productivity', f'{productivity}%']
+#     ]
+
+#     summary_table = Table(summary_data, colWidths=[250, 200])
+
+#     summary_table.setStyle(TableStyle([
+#         ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
+#         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+#         ('GRID', (0, 0), (-1, -1), 1, colors.black),
+#         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+#         ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
+#         ('BACKGROUND', (0, 1), (-1, -1), colors.beige)
+#     ]))
+
+
+#     if productivity > 80:
+#         insight = "Excellent Productivity"
+#     elif productivity > 50:
+#         insight = "Good Performance"
+#     else:
+#         insight = "Needs Improvement"
+
+#     elements.append(Paragraph(f"<b>AI Insight:</b> {insight}", styles['Normal']))
+
+#     high_priority = 0
+#     medium_priority = 0
+#     low_priority = 0
+
+#     for task in tasks:
+#         priority = task[5]
+
+#         if priority == "High":
+#             high_priority += 1
+#         elif priority == "Medium":
+#             medium_priority += 1
+#         elif priority == "Low":
+#             low_priority += 1
+
+    
+#     priority_data = [
+#         ["Priority", "Count"],
+#         ["High", high_priority],
+#         ["Medium", medium_priority],
+#         ["Low", low_priority]
+#     ]
+
+#     priority_table = Table(priority_data, colWidths=[250, 200])
+
+#     priority_table.setStyle(TableStyle([
+#         ('BACKGROUND', (0, 0), (-1, 0), colors.darkred),
+#         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+#         ('GRID', (0, 0), (-1, -1), 1, colors.black),
+#     ]))
+
+#     elements.append(summary_table)
+#     elements.append(Spacer(1, 30))
+
+#     elements.append(priority_table)
+#     elements.append(Spacer(1, 20))
+
+
+#     # Task Table Heading
+#     task_heading = Paragraph(
+#         "<b>Task Details</b>",
+#         styles['Heading2']
+#     )
+
+#     elements.append(task_heading)
+#     elements.append(Spacer(1, 10))
+
+#     # Task Table
+#     task_data = [
+#         ['Task', 'Status', 'Priority', 'Deadline']
+#     ]
+
+#     for task in tasks:
+
+#         task_data.append([
+#             task[2],
+#             task[3],
+#             task[5],
+#             task[4]
+#         ])
+
+#     task_table = Table(task_data, colWidths=[220, 100, 100, 100])
+
+#     task_table.setStyle(TableStyle([
+#         ('BACKGROUND', (0, 0), (-1, 0), colors.green),
+#         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+#         ('GRID', (0, 0), (-1, -1), 1, colors.black),
+#         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+#         ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke)
+#     ]))
+#     weekly_chart = {
+#     "Mon": 0,
+#     "Tue": 0,
+#     "Wed": 0,
+#     "Thu": 0,
+#     "Fri": 0,
+#     "Sat": 0,
+#     "Sun": 0
+# }
+
+#     for task in tasks:
+#         status = task[3]
+#         completed_at = task[7]
+
+#         if status == "completed" and completed_at:
+#             try:
+#                 date_obj = datetime.strptime(completed_at, "%Y-%m-%d")
+#                 day_name = date_obj.strftime("%a")
+
+#                 if day_name in weekly_chart:
+#                     weekly_chart[day_name] += 1
+
+#             except:
+#                 pass
+#     elements.append(task_table)
+
+#     # 👇 ADD HERE (your new feature)
+#     elements.append(Paragraph("<b>Weekly Activity Breakdown</b>", styles['Heading2']))
+
+#     for day, value in weekly_chart.items():
+#         elements.append(Paragraph(f"{day}: {value} tasks", styles['Normal']))
+
+#     # Build PDF
+#     doc.build(elements)
+
+#     buffer.seek(0)
+
+#     return send_file(
+#         buffer,
+#         as_attachment=True,
+#         download_name='Weekly_Report.pdf',
+#         mimetype='application/pdf'
+#     )
 
 @app.route('/download-report')
 def download_report():
@@ -645,155 +889,172 @@ def download_report():
 
     username = session['user']
 
-    c.execute(
-        "SELECT * FROM tasks WHERE username=?",
-        (username,)
-    )
-
+    c.execute("SELECT * FROM tasks WHERE username=?", (username,))
     tasks = c.fetchall()
-
     conn.close()
 
     total_tasks = len(tasks)
-
     completed_tasks = 0
     pending_tasks = 0
     overdue_tasks = 0
 
     today = datetime.now().date()
 
-    for task in tasks:
+    high_priority = 0
+    medium_priority = 0
+    low_priority = 0
 
+    weekly_chart = {
+        "Mon": 0,
+        "Tue": 0,
+        "Wed": 0,
+        "Thu": 0,
+        "Fri": 0,
+        "Sat": 0,
+        "Sun": 0
+    }
+
+    completed_days = []
+
+    # ---------------- DATA PROCESSING ----------------
+    for task in tasks:
         status = task[3]
         deadline = task[4]
+        priority = task[5]
+        completed_at = task[7]
 
-        if status == 'completed':
+        # status
+        if status == "completed":
             completed_tasks += 1
         else:
             pending_tasks += 1
 
-        if deadline and status != 'completed':
-
+        # overdue
+        if deadline and status != "completed":
             try:
-                deadline_date = datetime.strptime(
-                    deadline,
-                    "%Y-%m-%d"
-                ).date()
-
-                if deadline_date < today:
+                d = datetime.strptime(deadline, "%Y-%m-%d").date()
+                if d < today:
                     overdue_tasks += 1
-
-            except ValueError:
+            except:
                 pass
 
-    if total_tasks > 0:
-        productivity = int(
-            (completed_tasks / total_tasks) * 100
-        )
-    else:
-        productivity = 0
+        # priority
+        if priority == "High":
+            high_priority += 1
+        elif priority == "Medium":
+            medium_priority += 1
+        elif priority == "Low":
+            low_priority += 1
 
-    buffer = BytesIO()
+        # weekly chart
+        if status == "completed" and completed_at:
+            try:
+                date_obj = datetime.strptime(completed_at, "%Y-%m-%d")
+                day = date_obj.strftime("%a")
+                if day in weekly_chart:
+                    weekly_chart[day] += 1
+                    completed_days.append(day)
+            except:
+                pass
 
-    doc = SimpleDocTemplate(
-        buffer,
-        pagesize=letter
+    productivity = int((completed_tasks / total_tasks) * 100) if total_tasks else 0
+
+    insight = (
+        "🔥 Excellent Productivity" if productivity > 80
+        else "👍 Good Performance" if productivity > 50
+        else "⚠️ Needs Improvement"
     )
 
+    # ---------------- PDF START ----------------
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
     styles = getSampleStyleSheet()
-
     elements = []
 
-    # Title
-    title = Paragraph(
-        "<b>Smart Task Manager - Weekly Productivity Report</b>",
+    # ✔ 1. TITLE
+    elements.append(Paragraph(
+        "<b>Smart Task Manager - Weekly Report</b>",
         styles['Title']
-    )
-
-    elements.append(title)
+    ))
     elements.append(Spacer(1, 20))
 
-    # User Details
-    user_info = Paragraph(
-        f"<b>Username:</b> {username}",
-        styles['Normal']
-    )
+    # ✔ 2. USER INFO
+    elements.append(Paragraph(f"<b>User:</b> {username}", styles['Normal']))
+    elements.append(Spacer(1, 10))
 
-    elements.append(user_info)
+    # ✔ 3. AI INSIGHT
+    elements.append(Paragraph(f"<b>AI Insight:</b> {insight}", styles['Normal']))
     elements.append(Spacer(1, 20))
 
-    # Summary Table
+    # ✔ 4. SUMMARY TABLE
     summary_data = [
-        ['Metric', 'Value'],
-        ['Total Tasks', total_tasks],
-        ['Completed Tasks', completed_tasks],
-        ['Pending Tasks', pending_tasks],
-        ['Overdue Tasks', overdue_tasks],
-        ['Productivity', f'{productivity}%']
+        ["Metric", "Value"],
+        ["Total Tasks", total_tasks],
+        ["Completed", completed_tasks],
+        ["Pending", pending_tasks],
+        ["Overdue", overdue_tasks],
+        ["Productivity", f"{productivity}%"]
     ]
 
-    summary_table = Table(summary_data, colWidths=[250, 200])
-
+    summary_table = Table(summary_data)
     summary_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige)
+        ("BACKGROUND", (0,0), (-1,0), colors.darkblue),
+        ("TEXTCOLOR", (0,0), (-1,0), colors.white),
+        ("GRID", (0,0), (-1,-1), 1, colors.black),
     ]))
 
     elements.append(summary_table)
-    elements.append(Spacer(1, 30))
+    elements.append(Spacer(1, 20))
 
-    # Task Table Heading
-    task_heading = Paragraph(
-        "<b>Task Details</b>",
-        styles['Heading2']
-    )
-
-    elements.append(task_heading)
-    elements.append(Spacer(1, 10))
-
-    # Task Table
-    task_data = [
-        ['Task', 'Status', 'Priority', 'Deadline']
+    # ✔ 5. PRIORITY TABLE
+    priority_data = [
+        ["Priority", "Count"],
+        ["High", high_priority],
+        ["Medium", medium_priority],
+        ["Low", low_priority]
     ]
 
+    priority_table = Table(priority_data)
+    priority_table.setStyle(TableStyle([
+        ("BACKGROUND", (0,0), (-1,0), colors.darkred),
+        ("TEXTCOLOR", (0,0), (-1,0), colors.white),
+        ("GRID", (0,0), (-1,-1), 1, colors.black),
+    ]))
+
+    elements.append(priority_table)
+    elements.append(Spacer(1, 20))
+
+    # ✔ 6. WEEKLY BREAKDOWN (FIXED)
+    elements.append(Paragraph("<b>Weekly Activity Breakdown</b>", styles['Heading2']))
+
+    for day, value in weekly_chart.items():
+        elements.append(Paragraph(f"{day}: {value} tasks", styles['Normal']))
+
+    elements.append(Spacer(1, 20))
+
+    # ✔ 7. TASK TABLE
+    task_data = [["Task", "Status", "Priority", "Deadline"]]
+
     for task in tasks:
+        task_data.append([task[2], task[3], task[5], task[4]])
 
-        task_data.append([
-            task[2],
-            task[3],
-            task[5],
-            task[4]
-        ])
-
-    task_table = Table(task_data, colWidths=[220, 100, 100, 100])
-
+    task_table = Table(task_data)
     task_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.green),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke)
+        ("BACKGROUND", (0,0), (-1,0), colors.green),
+        ("TEXTCOLOR", (0,0), (-1,0), colors.white),
+        ("GRID", (0,0), (-1,-1), 1, colors.black),
     ]))
 
     elements.append(task_table)
 
-    # Build PDF
+    # BUILD PDF
     doc.build(elements)
-
     buffer.seek(0)
 
-    return send_file(
-        buffer,
-        as_attachment=True,
-        download_name='Weekly_Report.pdf',
-        mimetype='application/pdf'
-    )
-
-
+    return send_file(buffer,
+                     as_attachment=True,
+                     download_name="Weekly_Report.pdf",
+                     mimetype="application/pdf")
 
 @app.route('/logout')
 def logout():

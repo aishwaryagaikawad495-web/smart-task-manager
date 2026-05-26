@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
-    {% block title %}Weekly Report{% endblock %}
+{% block title %}Weekly Report{% endblock %}
 
-    {% block content %}
+{% block content %}
 
 <div class="weekly-report-page">
 
+    <!-- HEADER -->
     <div class="weekly-header">
         <h1>Weekly Productivity Report</h1>
         <p>Your task performance and analytics overview</p>
     </div>
 
-    <!-- TOP STATS -->
-
+    <!--  STATS -->
     <div class="weekly-stats">
 
         <div class="weekly-card">
@@ -37,8 +37,13 @@
 
     </div>
 
-    <!-- PRODUCTIVITY -->
+    <!--  AI INSIGHT -->
+    <div class="advanced-card">
+        <h3>AI Insight</h3>
+        <p>{{ insight }}</p>
+    </div>
 
+    <!--  PRODUCTIVITY -->
     <div class="analytics-box">
 
         <div class="analytics-header">
@@ -47,100 +52,140 @@
         </div>
 
         <div class="analytics-progress">
-            <div class="analytics-fill"
-                 style="width: {{ productivity }}%;">
+            <div class="analytics-fill" data-width="{{ productivity }}" style="width: 0%;">
             </div>
+        </div>
+    </div>
+
+
+<!-- ANALYTICS DASHBOARD -->
+<div class="analytics-dashboard">
+
+    <!-- DOUGHNUT CHART -->
+    <div class="report-section chart-card">
+
+        <div class="section-header">
+            <div>
+                <h2>Task Distribution</h2>
+                <p>Overview of completed, pending and overdue tasks</p>
+            </div>
+        </div>
+
+        <div class="chart-wrapper">
+            <canvas id="taskPieChart"></canvas>
         </div>
 
     </div>
 
-    <!-- WEEKLY CHART -->
+    <!-- TREND CHART -->
+    <div class="report-section chart-card">
 
-    <div class="report-section">
-        <h2>Weekly Completion Chart</h2>
-
-        <div class="chart-container">
-
-            {% for day, value in weekly_chart.items() %}
-
-            <div class="chart-bar-box">
-
-                <div class="chart-bar"
-                     style="height: {{ value * 20 }}px;">
-                </div>
-
-                <small>{{ day }}</small>
-
+        <div class="section-header">
+            <div>
+                <h2>Completion Trends</h2>
+                <p>Track productivity throughout the week</p>
             </div>
-
-            {% endfor %}
-
-        </div>
-    </div>
-
-    <!-- PRIORITY REPORT -->
-
-    <div class="report-section">
-
-        <h2>Priority-wise Report</h2>
-
-        <div class="priority-report">
-
-            <div class="priority-box high-box">
-                <h3>{{ high_priority }}</h3>
-                <p>High Priority</p>
-            </div>
-
-            <div class="priority-box medium-box">
-                <h3>{{ medium_priority }}</h3>
-                <p>Medium Priority</p>
-            </div>
-
-            <div class="priority-box low-box">
-                <h3>{{ low_priority }}</h3>
-                <p>Low Priority</p>
-            </div>
-
         </div>
 
-    </div>
-
-    <!-- EXTRA ANALYTICS -->
-
-    <div class="advanced-grid">
-
-        <div class="advanced-card">
-            <h3>Most Productive Day</h3>
-            <p>{{ most_productive_day }}</p>
+        <div class="chart-wrapper large-chart">
+            <canvas id="trendChart"></canvas>
         </div>
-
-        <div class="advanced-card">
-            <h3>Completion Streak</h3>
-            <p>{{ completion_streak }} Days</p>
-        </div>
-
-        <div class="advanced-card">
-            <h3>Average Completion Time</h3>
-            <p>{{ avg_completion_time }}</p>
-        </div>
-
-        <div class="advanced-card">
-            <h3>Overdue Analytics</h3>
-            <p>{{ overdue_percentage }}% tasks overdue</p>
-        </div>
-
-    </div>
-
-    <!-- PDF BUTTON -->
-
-    <div class="download-report">
-
-        <a href="/download-report" class="download-btn">
-            Download PDF Report
-        </a>
 
     </div>
 
 </div>
 
+
+<!--  WEEKLY CHART -->
+<div class="report-section">
+    <h2>Weekly Completion Chart</h2>
+
+    <div class="chart-container">
+
+        {% for day, value in weekly_chart.items() %}
+
+        <div class="chart-bar-box">
+
+            <div class="chart-bar"
+                 data-height="{{ value * 20 }}" style="height: 0px;">
+            </div>
+
+            <small>{{ day }}</small>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+</div>
+<!--  PRIORITY -->
+<div class="report-section">
+
+    <h2>Priority-wise Report</h2>
+
+    <div class="priority-report">
+
+        <div class="priority-box high-box">
+            <h3>{{ high_priority }}</h3>
+            <p>High Priority</p>
+        </div>
+
+        <div class="priority-box medium-box">
+            <h3>{{ medium_priority }}</h3>
+            <p>Medium Priority</p>
+        </div>
+
+        <div class="priority-box low-box">
+            <h3>{{ low_priority }}</h3>
+            <p>Low Priority</p>
+        </div>
+
+    </div>
+</div>
+
+<!--  ADVANCED ANALYTICS -->
+<div class="advanced-grid">
+
+    <div class="advanced-card">
+        <h3>Most Productive Day</h3>
+        <p>{{ most_productive_day | default('No Data') }}</p>
+    </div>
+
+    <div class="advanced-card">
+        <h3>Completion Streak</h3>
+        <p>{{ completion_streak | default(0) }} Days</p>
+    </div>
+
+    <div class="advanced-card">
+        <h3>Average Completion Time</h3>
+        <p>{{ avg_completion_time | default('0 Days') }}</p>
+    </div>
+
+    <div class="advanced-card">
+        <h3>Overdue Analytics</h3>
+        <p>{{ overdue_percentage | default(0) }}% tasks overdue</p>
+    </div>
+
+</div>
+
+<!--  DOWNLOAD BUTTON -->
+<div class="download-report">
+
+    <a href="/download-report" class="download-btn">
+        Download PDF Report
+    </a>
+
+</div>
+</div>
+<script>
+
+const completedTasks = Number('{{ completed_tasks }}');
+const pendingTasks = Number('{{ pending_tasks }}');
+const overdueTasks = Number('{{ overdue_tasks }}');
+
+const weeklyData = JSON.parse('{{ weekly_values | tojson | safe }}');
+
+console.log(weeklyData);
+
+</script>
 {% endblock %}
