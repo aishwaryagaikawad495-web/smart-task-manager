@@ -62,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // LINE CHART
     const trendCanvas = document.getElementById("trendChart");
-
     if (trendCanvas) {
 
         new Chart(trendCanvas, {

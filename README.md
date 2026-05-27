@@ -4,33 +4,59 @@ A simple web application built using Flask, SQLite, HTML, CSS, and JavaScript.
 Users can register, login, manage tasks, and admins can monitor all tasks through an admin dashboard.This project helps users manage tasks efficiently with analytics, deadlines, priorities, dark mode, and productivity tracking.
 
 # Features
-- User Registration system
-- User Login and Logout
-- SQLite database integration
-- Session-based authentication
-- Password visibility toggle
-- Clean and responsive UI design
--Admin Dashboard
--User Profile dashboard
--Flash messages
--Create, Read, Update, Delete (CRUD) Tasks
--Task deadlines support
--Dark mode support
--Edit existing tasks
-- Weekly Productivity Analytics
--PDF Weekly Report Download
--Interactive Charts using Chart.js
+### 🔐 Authentication & Security
+- User Registration & Login
+- Secure Password Hashing
+- Strong Password Validation
+- Session Management
+- Admin Role Access
+
+### 📋 Task Management
+- Add Tasks
+- Edit Tasks
+- Delete Tasks
+- Mark Tasks as Completed
+- Priority Levels (High / Medium / Low)
+- Automatic Overdue Detection
+
+### 📊 Productivity Analytics
+- Weekly Productivity Dashboard
+- Doughnut & Line Charts
+- Weekly Completion Trends
+- Productivity Percentage
+- Most Productive Day
+- Completion Streak Tracking
+- Overdue Task Analytics
+
+### 📄 PDF Reporting
+- Download Weekly Productivity Reports
+- Task Summary Tables
+- Priority Analysis
+- Weekly Activity Breakdown
+
+### 🎨 UI Features
+- Dark Mode
+- Responsive Dashboard
+- Animated Charts & Progress Bars
+- Admin Dashboard Navigation
 
 # Tech Stack
-- Python 
--Flask
+### Backend
+- Python
+- Flask
 - SQLite3
+- Werkzeug
+
+### Frontend
 - HTML5
 - CSS3
 - JavaScript
--Jinja2
+- Chart.js
+- Jinja2
+
+### PDF Generation
 - ReportLab
--Chart.js
+
 
 
 # Project Structure
@@ -121,14 +147,12 @@ http://127.0.0.1:5000/
 
 ```bash
 Username: admin
-Password: admin123
+Password: Abcd1234@
 ```
 
 ---
 
 # Future Improvements
-
-- Password Hashing
 - Task Categories
 - Email Authentication
 - REST API Integration
@@ -136,6 +160,7 @@ Password: admin123
 -AI Task Suggestions
 -Calendar Integration
 -Team Collaboration
+-Email reminder
 
 ---
 

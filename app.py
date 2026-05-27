@@ -1,6 +1,38 @@
 from flask import Flask, render_template, session,redirect,request,flash, send_file
 from datetime import datetime,timedelta
 from collections import Counter
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
+
+import re
+
+def is_strong_password(password):
+    """
+    Returns (True, message) if password is strong
+    Returns (False, error_message) if weak
+    """
+
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters long"
+
+    if not re.search(r"[A-Z]", password):
+        return False, "Password must contain at least one uppercase letter"
+
+    if not re.search(r"[a-z]", password):
+        return False, "Password must contain at least one lowercase letter"
+
+    if not re.search(r"[0-9]", password):
+        return False, "Password must contain at least one number"
+
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return False, "Password must contain at least one special character"
+
+    return True, "Password is strong"
+
+
+
+
 
 from io import BytesIO
 
@@ -51,15 +83,31 @@ c.execute("""
 c.execute("SELECT * FROM users WHERE username=?", ('admin',))
 admin = c.fetchone()
 
+# if admin:
+#     c.execute("UPDATE users SET role='admin',password='admin123' WHERE username='admin'")
+#     print("✅ Admin updated")
+
+# else:
+#     c.execute("""
+#         INSERT INTO users (username, password, role)
+#         VALUES (?, ?, ?)
+#     """, ('admin', 'admin123', 'admin'))
+
+#     print("✅ Admin created")
+hashed_admin = generate_password_hash("Abcd1234@")
+
 if admin:
-    c.execute("UPDATE users SET role='admin',password='admin123' WHERE username='admin'")
+    c.execute(
+        "UPDATE users SET role=?, password=? WHERE username=?",
+        ('admin', hashed_admin, 'admin')
+    )
     print("✅ Admin updated")
 
 else:
     c.execute("""
         INSERT INTO users (username, password, role)
         VALUES (?, ?, ?)
-    """, ('admin', 'admin123', 'admin'))
+    """, ('admin', hashed_admin, 'admin'))
 
     print("✅ Admin created")
 
@@ -85,13 +133,13 @@ def login():
         conn = sqlite3.connect("data.db")
         c = conn.cursor()
 
-        c.execute("SELECT * FROM users WHERE username=? AND password=?",
-                  (username, password))
+        c.execute("SELECT * FROM users WHERE username=?",
+                  (username,))
 
         user = c.fetchone()
         conn.close()
 
-        if user:
+        if user and check_password_hash(user[2], password):
             session['user'] = user[1]   # username
             session['role'] = user[3]   # role
             flash("✅ Login Successful", "success")
@@ -110,6 +158,13 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        is_valid, message = is_strong_password(password)
+
+        if not is_valid:
+            flash(message, "error")
+            return redirect('/register')
+
+        hashed_password = generate_password_hash(password)
 
         conn = sqlite3.connect("data.db")
         c = conn.cursor()
@@ -125,7 +180,7 @@ def register():
 
         # Insert new user
         c.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-                  (username, password, "user"))
+                  (username, hashed_password, "user"))
 
         conn.commit()
         conn.close()

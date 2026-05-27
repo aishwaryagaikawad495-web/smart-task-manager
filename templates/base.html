@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,28 +22,36 @@
             <a href="/">Home</a>
 
             {% if session.get('user') %}
-                <a href="/profile">Profile</a>
-                <a href="/tasks">Tasks</a>
-                <a href="/weekly-report">Analysis</a>
-                <a href="/logout">Logout</a>
+            <a href="/profile">Profile</a>
+            <a href="/tasks">Tasks</a>
+            <a href="/weekly-report">Analysis</a>
+            {% if session.get('role') == 'admin' %}
+
+            <a href="/admin">
+                Admin Dashboard
+            </a>
+
+            {% endif %}
+            <a href="/logout">Logout</a>
             {% else %}
-                <a href="/login">Login</a>
-                <a href="/register">Register</a>
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
             {% endif %}
             <button id="darkToggle" class="dark-btn">🌙</button>
         </div>
 
     </nav>
 
-   
-{% block content %}{% endblock %}
 
-{% block scripts %}{% endblock %}
+    {% block content %}{% endblock %}
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% block scripts %}{% endblock %}
 
-<script src="{{ url_for('static', filename='script1.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='script1.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>
