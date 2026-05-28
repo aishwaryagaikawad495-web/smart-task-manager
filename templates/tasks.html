@@ -1,39 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Tasks{% endblock %}
+{% block content %}
 
-    {% extends "base.html" %}
-    {% block title %}Tasks{% endblock %}
-    {% block content %}
+<div class="tasks-page">
 
-    <div class="tasks-page">
+    <h1>Your Tasks</h1>
 
-        <h1>Your Tasks</h1>
+    <!-- ADD TASK -->
+    <form method="POST" action="/tasks" class="task-form">
+        <input type="text" name="task" placeholder="Enter new task" required>
+        <input type="date" name="deadline" required>
+        <select name="priority" required>
+            <option value="High">🔴 High</option>
+            <option value="Medium">🟡 Medium</option>
+            <option value="Low">🟢 Low</option>
+        </select>
+        <button type="submit">Add Task</button>
+    </form>
 
-        <!-- ADD TASK -->
-        <form method="POST" action="/tasks" class="task-form">
-            <input type="text" name="task" placeholder="Enter new task" required>
-            <input type="date" name="deadline" required>
-            <select name="priority" required>
-                <option value="High">🔴 High</option>
-                <option value="Medium">🟡 Medium</option>
-                <option value="Low">🟢 Low</option>
-            </select>
-            <button type="submit">Add Task</button>
-        </form>
+    {% if search_query %}
 
-        <!-- TASK LIST -->
-        <ul class="task-list">
-            {% for task in tasks %}
-            <li class="task-item">
+    <h2 class="search-result-title">
+        Search Results for "{{ search_query }}"
+    </h2>
 
-                <div class="task-left">
+    {% endif %}
+    <!-- TASK LIST -->
+      {% if tasks %}
+    <ul class="task-list">
+        {% for task in tasks %}
+        <li class="task-item">
 
-                    <h3>{{ task[2] }}</h3>
+            <div class="task-left">
 
-                    <small>
-                        📅 Deadline: {{ task[4] }}
-                    </small>
+                <h3>{{ task[2] }}</h3>
 
-                    <br>
-                    <div class="task-badges">
+                <small>
+                    📅 Deadline: {{ task[4] }}
+                </small>
+
+                <br>
+                <div class="task-badges">
                     {% if task[3] == 'completed' %}
 
                     <span class="completed-badge">
@@ -71,27 +78,45 @@
                         </span>
 
                         {% endif %}
-                        </div>
                 </div>
+            </div>
 
 
-                <div class="task-actions">
+            <div class="task-actions">
 
-                    {% if task[3] == 'pending' %}
-                    <a href="/complete/{{ task[0] }}" class="done-btn">
-                        Done
-                    </a>
-                    {% endif %}
-                    <a href="/edit/{{ task[0] }}" class="edit-btn">
-                        Edit
-                    </a>
-                    <a href="/delete/{{ task[0] }}" class="delete-btn">
-                        Delete
-                    </a>
+                {% if task[3] == 'pending' %}
+                <a href="/complete/{{ task[0] }}" class="done-btn">
+                    Done
+                </a>
+                {% endif %}
+                <a href="/edit/{{ task[0] }}" class="edit-btn">
+                    Edit
+                </a>
+                <a href="/delete/{{ task[0] }}" class="delete-btn">
+                    Delete
+                </a>
 
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+
+    <div class="empty-state">
+
+        <div class="empty-icon">
+            🔍
+        </div>
+
+        <h2>No Tasks Found</h2>
+
+        <p>
+            We couldn't find any tasks matching your search.
+        </p>
+
     </div>
-    {% endblock %}
+
+    {% endif %}
+
+</div>
+{% endblock %}

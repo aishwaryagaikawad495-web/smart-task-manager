@@ -18,6 +18,26 @@
             Smart Task Manager
         </div>
 
+        <!-- CENTER SEARCH BAR -->
+        {% if session.get('user') %}
+        <form action="/search" method="GET" class="navbar-search">
+
+            <span class="search-icon">🔍</span>
+
+            {% if session.get('role') == 'admin' %}
+
+            <input type="text" name="query" class="navbar-search-input" placeholder="Search users, tasks, analytics..."
+                required>
+
+            {% else %}
+
+            <input type="text" name="query" class="navbar-search-input" placeholder="Search tasks, reports..." required>
+
+            {% endif %}
+
+        </form>
+        {% endif %}
+
         <div class="nav-links">
             <a href="/">Home</a>
 

@@ -1,4 +1,4 @@
-# smart-task-manager( Flask + SQlite)
+# Smart Task Manager (Flask + SQLite)
 
 A simple web application built using Flask, SQLite, HTML, CSS, and JavaScript.  
 Users can register, login, manage tasks, and admins can monitor all tasks through an admin dashboard.This project helps users manage tasks efficiently with analytics, deadlines, priorities, dark mode, and productivity tracking.
@@ -39,6 +39,7 @@ Users can register, login, manage tasks, and admins can monitor all tasks throug
 - Responsive Dashboard
 - Animated Charts & Progress Bars
 - Admin Dashboard Navigation
+- Search feature
 
 # Tech Stack
 ### Backend
