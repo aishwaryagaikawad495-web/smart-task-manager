@@ -1,58 +1,92 @@
+{% extends "base.html" %}
 
-    {% extends "base.html" %}
+{% block title %}Home{% endblock %}
 
-    {% block title %}Home{% endblock %}
+{% block content %}
+<!-- Hero Section -->
 
-    {% block content %}
-    <!-- Hero Section -->
+<section class="hero">
 
-    <section class="hero">
+    <h1>Manage Your Tasks Efficiently</h1>
 
-        <h1>Manage Your Tasks Efficiently</h1>
+    <p>
+        Organize your daily work, track progress,
+        and stay productive with Smart Task Manager.
+    </p>
 
-        <p>
-            Organize your daily work, track progress,
-            and stay productive with Smart Task Manager.
-        </p>
+    <a href="/get-started" class="hero-btn">
+        Get Started
+    </a>
 
-        <a href="/get-started" class="hero-btn">
-            Get Started
-        </a>
-
-    </section>
+</section>
 
 
-    <!-- Features Section -->
+<!-- Features Section -->
 
-    <section class="features">
+<section class="features">
 
-        <h2>Features</h2>
+    <h2>Features</h2>
 
-        <div class="feature-container">
+    <div class="feature-container">
 
-            <div class="feature-card">
-                <h3>Task Management</h3>
-                <p>Add, organize, and manage your daily tasks easily.</p>
-            </div>
-
-            <div class="feature-card">
-                <h3>User Authentication</h3>
-                <p>User authentication system for secure access.</p>
-            </div>
-
-            <div class="feature-card">
-                <h3>Dark Mode</h3>
-                <p>Clean and modern interface with dark mode support.</p>
-            </div>
-
+        <div class="feature-card">
+            <h3><i class="fa-solid fa-list-check"></i> Task Management</h3>
+            <p>Add, organize, and manage your daily tasks easily.</p>
         </div>
 
-    </section>
-    <!-- Footer -->
+        <div class="feature-card">
+            <h3><i class="fa-solid fa-user-shield"></i> User Authentication</h3>
+            <p>Secure login and registration system with
+                password hashing and role-based authentication.</p>
+        </div>
 
-    <footer>
+        <div class="feature-card">
+            <h3><i class="fa-solid fa-moon"></i> Dark Mode UI</h3>
+            <p>Clean and modern interface with dark mode support.</p>
+        </div>
 
-        <p>© 2026 Smart Task Manager | All Rights Reserved</p>
+        <div class="feature-card">
+            <h3><i class="fa-solid fa-chart-line"></i>Analytics</h3>
+            <p>Visualize productivity trends and weekly task insights.</p>
+        </div>
 
-    </footer>
+        <div class="feature-card">
+            <h3><i class="fa-solid fa-file-pdf"></i> PDF Reports</h3>
+            <p>Download detailed productivity reports in PDF format.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3><i class="fa-solid fa-shield-halved"></i> Secure Password Validation</h3>
+            <p>Strong password rules for enhanced account security.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3><i class="fa-solid fa-chart-pie"></i> Productivity Tracking</h3>
+            <p>Measure task completion percentage and maintain productivity streaks.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3><i class="fa-solid fa-flag"></i> Priority Management</h3>
+            <p>Organize tasks efficiently using High, Medium, and Low priorities.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Activity Tracking</h3>
+            <p>
+                Track all user activities including task creation,
+                edits, deletions, completions, logins,
+                registrations, and report downloads.
+            </p>
+
+        </div>
+    </div>
+
+</section>
+<!-- Footer -->
+
+<footer>
+
+    <p>© 2026 Smart Task Manager | All Rights Reserved</p>
+
+</footer>
 {% endblock %}

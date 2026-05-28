@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="tasks-page">
+
+    <h1>Task History</h1>
+
+    <div class="history-stats">
+
+        <div class="history-stat-card">
+            <h2>{{ total_logs }}</h2>
+            <p>Total Activities</p>
+        </div>
+
+        <div class="history-stat-card">
+            <h2>{{ completed_count }}</h2>
+            <p>Tasks Completed</p>
+        </div>
+
+        <div class="history-stat-card">
+            <h2>{{ edited_count }}</h2>
+            <p>Tasks Edited</p>
+        </div>
+
+        <div class="history-stat-card">
+            <h2>{{ deleted_count }}</h2>
+            <p>Tasks Deleted</p>
+        </div>
+
+    </div>
+    <div class="history-container">
+
+        {% for item in history_data %}
+
+        <div class="history-item">
+
+            <div class="task-left">
+
+                <h3>{{ item[0] }}</h3>
+
+                <p class="
+    {% if 'Completed' in item[1] %}completed-badge
+    {% elif 'Deleted' in item[1] %}overdue-badge
+    {% elif 'Edited' in item[1] %}pending-badge
+    {% else %}role-badge
+    {% endif %}
+">
+                    {{ item[1] }}
+                </p>
+
+                <small>{{ item[2] }}</small>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

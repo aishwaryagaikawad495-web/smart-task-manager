@@ -1,7 +1,6 @@
 body,
 nav,
 .login-box,
-.feature-card,
 .task-item,
 .card,
 .stat-card,
@@ -111,8 +110,12 @@ body {
     padding: 30px;
     width: 300px;
     border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
 .feature-card h3 {
     margin-bottom: 15px;
     color: #222;
@@ -893,7 +896,9 @@ button:active {
 body.dark .task-left h3 {
     color: #f1f1f1;
 }
-
+body.dark .info-row strong {
+    color: white;
+}
 html {
     scroll-behavior: smooth;
 }
@@ -1762,4 +1767,90 @@ body.dark .empty-state h2 {
 body.dark .empty-state p {
 
     color: #bdbdbd;
+}
+
+
+/* History page */
+.history-container {
+    max-width: 800px;
+    margin: auto;
+}
+
+.history-stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.history-stat-card {
+    flex: 1;
+    min-width: 200px;
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    text-align: center;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+
+    transition: all 0.3s ease;
+}
+
+.history-stat-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.history-stat-card h2 {
+    color: #00adb5;
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+
+.history-stat-card p {
+    color: #666;
+}
+body.dark .history-stat-card {
+    background: #1e1e1e;
+}
+
+body.dark .history-stat-card p {
+    color: #bdbdbd;
+}
+.history-item {
+    background: white;
+    padding: 18px 22px;
+    border-radius: 14px;
+    margin: 12px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.history-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+/* HISTORY ITEM DARK */
+body.dark .history-item {
+    background: #1e1e1e;
+    color: #f1f1f1;
+    border: 1px solid #333;
+}
+body.dark .history-item:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+/* TEXT FIX */
+body.dark .history-item h3 {
+    color: #f1f1f1;
+}
+
+body.dark .history-item p {
+    color: #bdbdbd;
+}
+
+body.dark .history-item small {
+    color: #999;
 }

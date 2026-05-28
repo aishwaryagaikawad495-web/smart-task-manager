@@ -2,10 +2,34 @@ from flask import Flask, render_template, session,redirect,request,flash, send_f
 from datetime import datetime,timedelta
 from collections import Counter
 from werkzeug.security import generate_password_hash, check_password_hash
-
-
-
 import re
+
+from io import BytesIO
+
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle
+)
+
+
+def add_history(username, action):
+
+    conn = sqlite3.connect("data.db")
+    c = conn.cursor()
+
+    created_at = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    c.execute("""
+        INSERT INTO history (username, action, created_at)
+        VALUES (?, ?, ?)
+    """, (username, action, created_at))
+
+    conn.commit()
+    conn.close()
+
 
 def is_strong_password(password):
     """
@@ -30,26 +54,14 @@ def is_strong_password(password):
 
     return True, "Password is strong"
 
-
-
-
-
-from io import BytesIO
-
-from reportlab.platypus import (
-    SimpleDocTemplate,
-    Paragraph,
-    Spacer,
-    Table,
-    TableStyle
-)
-
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter
 
 app = Flask(__name__)
-app.secret_key="mysecretkey"
+# app.secret_key="mysecretkey"
+import os
+app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret")
 
 import sqlite3
 
@@ -78,6 +90,16 @@ c.execute("""
         completed_at TEXT
     )
     """)
+
+#History table
+c.execute("""
+CREATE TABLE IF NOT EXISTS history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    action TEXT,
+    created_at TEXT
+)
+""")
 
 # Create default admin user
 c.execute("SELECT * FROM users WHERE username=?", ('admin',))
@@ -116,9 +138,6 @@ conn.close()
 
 
 
-
-
-
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -137,6 +156,8 @@ def login():
                   (username,))
 
         user = c.fetchone()
+        if user and check_password_hash(user[2], password):
+            add_history(username, "Logged into account")
         conn.close()
 
         if user and check_password_hash(user[2], password):
@@ -183,6 +204,7 @@ def register():
                   (username, hashed_password, "user"))
 
         conn.commit()
+        add_history(username, "Registered new account")
         conn.close()
         flash("✅ Registration successful! Please login.", "success")
 
@@ -216,6 +238,7 @@ def tasks():
             """,
             (username, task, deadline, priority, created_at))
         conn.commit()
+        add_history(username, f'Added task "{task}"')
 
     #  Show tasks for logged-in user
     c.execute("SELECT * FROM tasks WHERE username=?",
@@ -316,11 +339,16 @@ def complete_task(id):
         return redirect('/login')
     conn = sqlite3.connect("data.db")
     c = conn.cursor()
-
-    # c.execute(
-    # "UPDATE tasks SET status='completed' WHERE id=? AND username=?",
-    # (id, session['user'])
     completed_at = datetime.now().strftime("%Y-%m-%d")
+
+    c.execute(
+    "SELECT task FROM tasks WHERE id=? AND username=?",
+    (id, session['user'])
+    )
+
+    task_data = c.fetchone()
+
+    task_name = task_data[0]
 
     c.execute("""
         UPDATE tasks
@@ -332,6 +360,7 @@ def complete_task(id):
     )
 
     conn.commit()
+    add_history(session['user'],f'Completed task "{task_name}"')
     conn.close()
 
     return redirect('/tasks')
@@ -345,11 +374,21 @@ def delete_task(id):
     c = conn.cursor()
 
     c.execute(
+    "SELECT task FROM tasks WHERE id=? AND username=?",
+    (id, session['user'])
+)
+
+    task_data = c.fetchone()
+
+    task_name = task_data[0]
+    c.execute(
     "DELETE FROM tasks WHERE id=? AND username=?",
     (id, session['user'])
 )
 
     conn.commit()
+    add_history(
+    session['user'],f'Deleted task "{task_name}"')
     conn.close()
 
     return redirect('/tasks')
@@ -495,6 +534,12 @@ def edit_task(id):
         updated_priority = request.form["priority"]
 
         c.execute(
+        "SELECT task FROM tasks WHERE id=? AND username=?",
+        (id, session['user'])
+        )
+
+        old_task = c.fetchone()[0]
+        c.execute(
             """
             UPDATE tasks
             SET task=?, deadline=?, priority=?
@@ -504,6 +549,8 @@ def edit_task(id):
         )
 
         conn.commit()
+        add_history(
+    session['user'],f'Edited task "{old_task}" to "{updated_task}"')
         conn.close()
 
         return redirect("/tasks")
@@ -762,6 +809,67 @@ def weekly_report():
     )
 
 
+@app.route('/history')
+def history():
+
+    if 'user' not in session:
+        return redirect('/login')
+
+    conn = sqlite3.connect("data.db")
+    c = conn.cursor()
+
+    # ADMIN
+    if session.get('role') == 'admin':
+
+        c.execute("""
+            SELECT username, action, created_at
+            FROM history
+            ORDER BY id DESC
+        """)
+
+    # USER
+    else:
+
+        c.execute("""
+            SELECT username, action, created_at
+            FROM history
+            WHERE username=?
+            ORDER BY id DESC
+        """, (session['user'],))
+
+    history_data = c.fetchall()
+    # Total logs
+    total_logs = len(history_data)
+
+# Completed count
+    completed_count = len([
+        x for x in history_data
+        if "Completed" in x[1]
+        ])
+
+# Deleted count
+    deleted_count = len([
+        x for x in history_data
+        if "Deleted" in x[1]
+        ])
+    conn.close()
+#Edited count
+    edited_count = len([
+        x for x in history_data
+        if "Edited task" in x[1]
+        ])
+        
+    return render_template(
+    "history.html",
+    history_data=history_data,
+    total_logs=total_logs,
+    completed_count=completed_count,
+    deleted_count=deleted_count,
+    edited_count=edited_count
+)
+
+
+
 @app.route('/download-report')
 def download_report():
 
@@ -940,8 +1048,14 @@ def download_report():
                      download_name="Weekly_Report.pdf",
                      mimetype="application/pdf")
 
+
+
+
+
 @app.route('/logout')
 def logout():
+    if 'user' in session:
+        add_history(session['user'], "Logged out")
     session.clear()
     return redirect('/')
 
