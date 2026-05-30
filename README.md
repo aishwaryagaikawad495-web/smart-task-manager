@@ -51,6 +51,7 @@ The system also includes an **admin dashboard** for monitoring users and tasks.
 - Animated Charts & Progress Bars
 - Admin Dashboard Navigation
 - Search feature
+-Profile photo feature
 
 # Tech Stack
 ### Backend
@@ -95,6 +96,7 @@ Smart-Task-Manager/
 │   ├── style.css
 │   └── script.js
 │   └── script1.js
+│   ├── uploads
 │
 └── README.md
 
