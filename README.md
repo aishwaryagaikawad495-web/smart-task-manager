@@ -89,6 +89,7 @@ Smart-Task-Manager/
 |   ├── edit_task.html
 |   ├── weekly_report.html
 |   ├── history.html
+|   ├── edit_profile.html
 │
 ├── /static
 │   ├── style.css

@@ -1,135 +1,140 @@
-
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="profile-container">
+<div class="profile-container">
 
-        <div class="profile-card">
+    <div class="profile-card">
 
-            <div class="profile-top">
+        <div class="profile-top">
 
-                <div class="profile-avatar">
-                    {{ username[0].upper() }}
-                </div>
+            <div class="profile-avatar">
 
-                <div>
+                {% set default_img = url_for('static', filename='uploads/default.png') %}
 
-                    <h1>{{ username }}</h1>
+                <img src="{{ url_for('static', filename='uploads/' + (profile_pic or 'default.png')) }}"
+                    onerror="this.onerror=null;this.src='{{ default_img }}'">
+            </div>
+            <div class="profile-user-info">
+                <h1>{{ username }}</h1>
 
-                    <p class="role-badge">
-                        {{ role }}
-                    </p>
+                <p class="role-badge">
+                    {{ role }}
+                </p>
 
-                </div>
-
+                <a href="{{ url_for('edit_profile') }}" class="profile-btn">
+                    <i class="fas fa-user-cog"></i>
+                    Profile Settings
+                </a>
             </div>
 
-
-            <div class="profile-stats">
-
-                <div class="stat-card">
-
-                    <h2>{{ total_tasks }}</h2>
-
-                    <p>Total Tasks</p>
-
-                </div>
-
-                <div class="stat-card">
-
-                    <h2>{{ completed_tasks }}</h2>
-
-                    <p>Completed</p>
-
-                </div>
-
-                <div class="stat-card">
-
-                    <h2>{{ pending_tasks }}</h2>
-
-                    <p>Pending</p>
-
-                </div>
-
-            </div>
-
-
-            <div class="progress-section">
-
-                <div class="progress-header">
-
-                    <h3>Task Completion</h3>
-
-                    <span>{{ completion_percentage }}%</span>
-
-                </div>
-
-                <div class="progress-bar">
-
-                    <div class="progress-fill" style="--progress: {{ completion_percentage }}%;">
-                    </div>
-                </div>
-
-            </div>
-
-
-            <div class="profile-info">
-
-                <div class="info-row">
-
-                    <span>Username</span>
-
-                    <strong>{{ username }}</strong>
-
-                </div>
-
-                <div class="info-row">
-
-                    <span>Role</span>
-
-                    <strong>{{ role }}</strong>
-
-                </div>
-
-                <div class="info-row">
-
-                    <span>Project</span>
-
-                    <strong>Smart Task Manager</strong>
-
-                </div>
-
-            </div>
-
-            <div class="extra-section">
-                <div class="extra-card">
-
-                    <h3>User Level</h3>
-
-                    <p>{{ user_level }}</p>
-
-                </div>
-
-                <div class="extra-card">
-
-                    <h3>Status</h3>
-
-                    <p>
-                        {% if completion_percentage >= 70 %}
-                        Highly Productive 🚀
-
-                        {% elif completion_percentage >= 40 %}
-                        Improving 📈
-
-                        {% else %}
-                        Keep Going 💪
-                        {% endif %}
-                    </p>
-
-                </div>
-
-            </div>
         </div>
 
+
+        <div class="profile-stats">
+
+            <div class="stat-card">
+
+                <h2>{{ total_tasks }}</h2>
+
+                <p>Total Tasks</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h2>{{ completed_tasks }}</h2>
+
+                <p>Completed</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h2>{{ pending_tasks }}</h2>
+
+                <p>Pending</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="progress-section">
+
+            <div class="progress-header">
+
+                <h3>Task Completion</h3>
+
+                <span>{{ completion_percentage }}%</span>
+
+            </div>
+
+            <div class="progress-bar">
+
+                <div class="progress-fill" style="--progress: {{ completion_percentage }}%;">
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="profile-info">
+
+            <div class="info-row">
+
+                <span>Username</span>
+
+                <strong>{{ username }}</strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>Role</span>
+
+                <strong>{{ role }}</strong>
+
+            </div>
+
+            <div class="info-row">
+
+                <span>Project</span>
+
+                <strong>Smart Task Manager</strong>
+
+            </div>
+
+        </div>
+
+        <div class="extra-section">
+            <div class="extra-card">
+
+                <h3>User Level</h3>
+
+                <p>{{ user_level }}</p>
+
+            </div>
+
+            <div class="extra-card">
+
+                <h3>Status</h3>
+
+                <p>
+                    {% if completion_percentage >= 70 %}
+                    Highly Productive 🚀
+
+                    {% elif completion_percentage >= 40 %}
+                    Improving 📈
+
+                    {% else %}
+                    Keep Going 💪
+                    {% endif %}
+                </p>
+
+            </div>
+
+        </div>
     </div>
+
+</div>
 {% endblock %}

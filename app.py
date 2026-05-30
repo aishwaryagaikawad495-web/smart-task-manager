@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session,redirect,request,flash, send_file
+from flask import Flask, render_template, session,redirect,request,flash, send_file, url_for
 from datetime import datetime,timedelta
 from collections import Counter
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -14,6 +14,66 @@ from reportlab.platypus import (
     TableStyle
 )
 
+import sqlite3
+
+conn = sqlite3.connect("data.db")
+c = conn.cursor()
+#user table
+c.execute("""
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    password TEXT,
+    role TEXT DEFAULT 'user',
+    profile_pic TEXT DEFAULT 'default.png'
+)
+""")
+#tasks table
+c.execute("""
+    CREATE TABLE IF NOT EXISTS tasks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT,
+        task TEXT,
+        status TEXT DEFAULT 'pending',
+        deadline TEXT,
+        priority TEXT DEFAULT 'Medium',
+        created_at TEXT,
+        completed_at TEXT
+    )
+    """)
+
+#History table
+c.execute("""
+CREATE TABLE IF NOT EXISTS history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    action TEXT,
+    created_at TEXT
+)
+""")
+
+# Create default admin user
+c.execute("SELECT * FROM users WHERE username=?", ('admin',))
+admin = c.fetchone()
+hashed_admin = generate_password_hash("Abcd1234@")
+
+if admin:
+    c.execute(
+        "UPDATE users SET role=?, password=? WHERE username=?",
+        ('admin', hashed_admin, 'admin')
+    )
+    print("✅ Admin updated")
+
+else:
+    c.execute("""
+        INSERT INTO users (username, password, role)
+        VALUES (?, ?, ?)
+    """, ('admin', hashed_admin, 'admin'))
+
+    print("✅ Admin created")
+
+conn.commit()
+conn.close()
 
 def add_history(username, action):
 
@@ -58,84 +118,19 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter
 
+from werkzeug.utils import secure_filename
+
 app = Flask(__name__)
-# app.secret_key="mysecretkey"
 import os
-app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret")
+import secrets
+app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 
-import sqlite3
 
-with sqlite3.connect("data.db") as conn:
-    c = conn.cursor()
-
-#user table
-c.execute("""
-CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE,
-    password TEXT,
-    role TEXT DEFAULT 'user'
-)
-""")
-#tasks table
-c.execute("""
-    CREATE TABLE IF NOT EXISTS tasks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT,
-        task TEXT,
-        status TEXT DEFAULT 'pending',
-        deadline TEXT,
-        priority TEXT DEFAULT 'Medium',
-        created_at TEXT,
-        completed_at TEXT
-    )
-    """)
-
-#History table
-c.execute("""
-CREATE TABLE IF NOT EXISTS history (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT,
-    action TEXT,
-    created_at TEXT
-)
-""")
-
-# Create default admin user
-c.execute("SELECT * FROM users WHERE username=?", ('admin',))
-admin = c.fetchone()
-
-# if admin:
-#     c.execute("UPDATE users SET role='admin',password='admin123' WHERE username='admin'")
-#     print("✅ Admin updated")
-
-# else:
-#     c.execute("""
-#         INSERT INTO users (username, password, role)
-#         VALUES (?, ?, ?)
-#     """, ('admin', 'admin123', 'admin'))
-
-#     print("✅ Admin created")
-hashed_admin = generate_password_hash("Abcd1234@")
-
-if admin:
-    c.execute(
-        "UPDATE users SET role=?, password=? WHERE username=?",
-        ('admin', hashed_admin, 'admin')
-    )
-    print("✅ Admin updated")
-
-else:
-    c.execute("""
-        INSERT INTO users (username, password, role)
-        VALUES (?, ?, ?)
-    """, ('admin', hashed_admin, 'admin'))
-
-    print("✅ Admin created")
-
-conn.commit()
-conn.close()
-
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route('/')
@@ -143,6 +138,15 @@ def home():
     return render_template('index.html')
 
 
+from functools import wraps
+
+def admin_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if session.get('role') != 'admin':
+            return redirect('/login')
+        return f(*args, **kwargs)
+    return wrapper
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -156,13 +160,13 @@ def login():
                   (username,))
 
         user = c.fetchone()
-        if user and check_password_hash(user[2], password):
-            add_history(username, "Logged into account")
         conn.close()
 
         if user and check_password_hash(user[2], password):
             session['user'] = user[1]   # username
             session['role'] = user[3]   # role
+            session['user_id'] = user[0] 
+            add_history(username, "Logged into account")
             flash("✅ Login Successful", "success")
             if user[3] == 'admin':
                 return redirect('/admin')
@@ -347,7 +351,8 @@ def complete_task(id):
     )
 
     task_data = c.fetchone()
-
+    if not task_data:
+        return redirect('/tasks')
     task_name = task_data[0]
 
     c.execute("""
@@ -379,7 +384,8 @@ def delete_task(id):
 )
 
     task_data = c.fetchone()
-
+    if not task_data:
+        return redirect('/tasks')
     task_name = task_data[0]
     c.execute(
     "DELETE FROM tasks WHERE id=? AND username=?",
@@ -445,10 +451,22 @@ def profile():
     if 'user' not in session:
         return redirect('/login')
 
+
+    user_id = session['user_id']
+    username = session['user']
+
+
     conn = sqlite3.connect("data.db")
     c = conn.cursor()
 
-    username = session['user']
+     # Get user
+    c.execute("SELECT * FROM users WHERE id=?", (user_id,))
+    user = c.fetchone()
+
+    if not user:
+        conn.close()
+        return redirect('/login')
+    profile_pic = user[4] if user[4] else "default.png"
 
     # Total tasks
     c.execute(
@@ -471,6 +489,7 @@ def profile():
     )
     pending_tasks = c.fetchone()[0]
 
+    conn.close()
 
     if total_tasks > 0:
         completion_percentage = int(
@@ -491,8 +510,6 @@ def profile():
         user_level = "Beginner"
 
 
-    conn.close()
-
     return render_template(
     'profile.html',
 
@@ -504,7 +521,8 @@ def profile():
     pending_tasks=pending_tasks,
 
     completion_percentage=completion_percentage,
-    user_level=user_level
+    user_level=user_level,
+    profile_pic=profile_pic
 )
 
 
@@ -515,8 +533,6 @@ def get_started():
         return redirect('/tasks')
 
     return redirect('/register')
-
-
 
 
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
@@ -537,8 +553,13 @@ def edit_task(id):
         "SELECT task FROM tasks WHERE id=? AND username=?",
         (id, session['user'])
         )
+        task_data = c.fetchone()
 
-        old_task = c.fetchone()[0]
+        if not task_data:
+            conn.close()
+            return redirect('/tasks')
+
+        old_task = task_data[0]
         c.execute(
             """
             UPDATE tasks
@@ -1050,6 +1071,116 @@ def download_report():
 
 
 
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def edit_profile():
+
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    user_id = session['user_id']
+
+    conn = sqlite3.connect("data.db")
+    c = conn.cursor()
+
+    if request.method == 'POST':
+
+        username = request.form['username']
+        file = request.files.get('profile_pic')
+        old_username = session['user']
+        filename = None
+
+        if file and allowed_file(file.filename):
+            import uuid
+
+            filename = f"{uuid.uuid4()}_{secure_filename(file.filename)}"
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            c.execute("""
+                UPDATE users
+                SET username=?, profile_pic=?
+                WHERE id=?
+            """, (username, filename, user_id))
+
+        else:
+            c.execute("""
+                UPDATE users
+                SET username=?
+                WHERE id=?
+            """, (username, user_id))
+        
+        # Always update related tables
+        c.execute(
+            "UPDATE tasks SET username=? WHERE username=?",
+            (username, old_username)
+        )
+
+        c.execute(
+            "UPDATE history SET username=? WHERE username=?",
+        (username, old_username)
+        )
+        conn.commit()
+        conn.close()
+
+        session['user'] = username
+
+        return redirect('/profile')
+
+    # GET REQUEST
+    c.execute(
+        "SELECT username, profile_pic FROM users WHERE id=?",
+        (user_id,)
+    )
+
+    user = c.fetchone()
+    conn.close()
+    profile_pic = user[1] if user[1] else "default.png"
+
+    return render_template(
+    "edit_profile.html",
+    username=user[0],
+    profile_pic=profile_pic
+    )
+
+
+@app.route('/delete_photo', methods=['POST'])
+def delete_photo():
+
+    if 'user_id' not in session:
+        return redirect('/login')
+
+    user_id = session['user_id']
+
+    conn = sqlite3.connect("data.db")
+    c = conn.cursor()
+
+    c.execute(
+        "SELECT profile_pic FROM users WHERE id=?",
+        (user_id,)
+    )
+
+    user = c.fetchone()
+
+    if user and user[0] != "default.png":
+        file_path = os.path.join(
+            app.config['UPLOAD_FOLDER'],
+            user[0]
+        )
+
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+    c.execute("""
+        UPDATE users
+        SET profile_pic='default.png'
+        WHERE id=?
+    """, (user_id,))
+
+    conn.commit()
+    conn.close()
+
+    flash("Profile photo removed!", "success")
+
+    return redirect('/profile')
 
 
 @app.route('/logout')

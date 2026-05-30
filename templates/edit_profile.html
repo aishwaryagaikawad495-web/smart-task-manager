@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="edit-page">
+    <div class="edit-box">
+
+        <h2>Edit Profile</h2>
+
+        <div class="profile-preview">
+
+            {% set default_img = url_for('static', filename='uploads/default.png') %}
+
+            <img src="{{ url_for('static', filename='uploads/' + (profile_pic or 'default.png')) }}"
+                onerror="this.onerror=null;this.src='{{ default_img }}';" class="edit-avatar">
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <label>Username</label>
+
+            <input type="text" name="username" value="{{ username }}" required>
+
+            <label>Change Profile Photo</label>
+
+            <input type="file" name="profile_pic">
+
+            <button type="submit">
+                Save Changes
+            </button>
+
+        </form>
+        <form action="{{ url_for('delete_photo') }}" method="POST">
+            <button type="submit" class="danger-btn">
+                Remove Photo
+            </button>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
