@@ -6,6 +6,13 @@ import re
 
 from io import BytesIO
 
+app = Flask(__name__)
+import os
+import secrets
+app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
+
+
+
 from reportlab.platypus import (
     SimpleDocTemplate,
     Paragraph,
@@ -18,6 +25,33 @@ import sqlite3
 
 conn = sqlite3.connect("data.db")
 c = conn.cursor()
+
+
+
+@app.context_processor
+def notification_count():
+
+    if 'user' not in session:
+        return dict(unread_count=0)
+
+    conn = sqlite3.connect("data.db")
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT COUNT(*)
+        FROM notifications
+        WHERE username=?
+        AND is_read=0
+    """, (session['user'],))
+
+    count = c.fetchone()[0]
+
+    conn.close()
+
+    return dict(unread_count=count)
+
+
+
 #user table
 c.execute("""
 CREATE TABLE IF NOT EXISTS users (
@@ -52,26 +86,30 @@ CREATE TABLE IF NOT EXISTS history (
 )
 """)
 
-# Create default admin user
+#Notification table
+c.execute("""
+CREATE TABLE IF NOT EXISTS notifications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT,
+    task_id INTEGER,
+    message TEXT,
+    is_read INTEGER DEFAULT 0,
+    created_at TEXT,
+    type TEXT
+)
+""")
+
+
 c.execute("SELECT * FROM users WHERE username=?", ('admin',))
 admin = c.fetchone()
-hashed_admin = generate_password_hash("Abcd1234@")
 
-if admin:
-    c.execute(
-        "UPDATE users SET role=?, password=? WHERE username=?",
-        ('admin', hashed_admin, 'admin')
-    )
-    print("✅ Admin updated")
+if not admin:
+    hashed_admin = generate_password_hash("Abcd1234@")
 
-else:
     c.execute("""
         INSERT INTO users (username, password, role)
         VALUES (?, ?, ?)
     """, ('admin', hashed_admin, 'admin'))
-
-    print("✅ Admin created")
-
 conn.commit()
 conn.close()
 
@@ -89,6 +127,91 @@ def add_history(username, action):
 
     conn.commit()
     conn.close()
+
+
+
+
+def add_notification(username, task_id, message, notification_type):
+   
+    conn = sqlite3.connect("data.db")
+    c = conn.cursor()
+
+    # Check duplicate notification
+    c.execute("""
+        SELECT id
+        FROM notifications
+        WHERE username=?
+        AND task_id=?
+        AND type=?
+    """, (
+        username,
+        task_id,
+        notification_type
+))
+
+    existing = c.fetchone()
+
+    if not existing:
+
+        created_at = datetime.now().strftime(
+            "%Y-%m-%d %H:%M"
+        )
+
+        c.execute("""
+             INSERT INTO notifications
+                (
+                username,
+                task_id,
+                message,
+                type,
+                created_at
+         )
+        VALUES (?, ?, ?, ?, ?)
+        """, (
+                username,
+                task_id,
+                message,
+                notification_type,
+                created_at
+        ))
+        conn.commit()
+
+    conn.close()
+
+
+
+@app.route('/notifications')
+def notifications():
+
+    if 'user' not in session:
+        return redirect('/login')
+
+    conn = sqlite3.connect("data.db")
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT *
+        FROM notifications
+        WHERE username=?
+        ORDER BY id DESC
+    """, (session['user'],))
+
+    notifications = c.fetchall()
+
+    # Mark all as read
+    c.execute("""
+        UPDATE notifications
+        SET is_read=1
+        WHERE username=?
+    """, (session['user'],))
+
+    conn.commit()
+    conn.close()
+
+    return render_template(
+        "notifications.html",
+        notifications=notifications
+    )
 
 
 def is_strong_password(password):
@@ -119,11 +242,6 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter
 
 from werkzeug.utils import secure_filename
-
-app = Flask(__name__)
-import os
-import secrets
-app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 
 
 UPLOAD_FOLDER = 'static/uploads'
@@ -247,10 +365,47 @@ def tasks():
     #  Show tasks for logged-in user
     c.execute("SELECT * FROM tasks WHERE username=?",
               (session['user'],))
+
+
     data = c.fetchall()
 
-    conn.close()
     today = datetime.now().date()
+
+    for task in data:
+        task_id = task[0]
+        task_name = task[2]
+        status = task[3]
+        deadline = task[4]
+
+        try:
+
+            deadline_date = datetime.strptime(
+                deadline,
+                "%Y-%m-%d"
+            ).date()
+
+            # Due Today
+            if deadline_date == today and status != "completed":
+
+                add_notification(
+                    session['user'],
+                    task_id,
+                    f'📅 Task "{task_name}" is due today',
+                    'due_today'
+                )
+            # Overdue
+            elif deadline_date < today and status != "completed":
+
+                add_notification(
+                    session['user'],
+                    task_id,
+                    f'⚠️ Task "{task_name}" is overdue','overdue'
+                )
+
+        except:
+            pass
+
+    conn.close()
 
     updated_tasks = []
 
@@ -381,7 +536,7 @@ def delete_task(id):
     c.execute(
     "SELECT task FROM tasks WHERE id=? AND username=?",
     (id, session['user'])
-)
+    )
 
     task_data = c.fetchone()
     if not task_data:
@@ -390,8 +545,11 @@ def delete_task(id):
     c.execute(
     "DELETE FROM tasks WHERE id=? AND username=?",
     (id, session['user'])
-)
-
+    )
+    c.execute(
+        "DELETE FROM notifications WHERE task_id=?",
+        (id,)
+    )
     conn.commit()
     add_history(
     session['user'],f'Deleted task "{task_name}"')
@@ -535,8 +693,9 @@ def get_started():
     return redirect('/register')
 
 
-@app.route("/edit/<int:id>", methods=["GET", "POST"])
 
+
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit_task(id):
     if 'user' not in session:
         return redirect('/login')
@@ -570,6 +729,12 @@ def edit_task(id):
         )
 
         conn.commit()
+        c.execute("""
+            DELETE FROM notifications
+            WHERE task_id=?
+        """, (id,))
+
+        conn.commit() 
         add_history(
     session['user'],f'Edited task "{old_task}" to "{updated_task}"')
         conn.close()
@@ -890,7 +1055,6 @@ def history():
 )
 
 
-
 @app.route('/download-report')
 def download_report():
 
@@ -1113,7 +1277,10 @@ def edit_profile():
             "UPDATE tasks SET username=? WHERE username=?",
             (username, old_username)
         )
-
+        c.execute(
+            "UPDATE notifications SET username=? WHERE username=?",
+            (username, old_username)
+        )
         c.execute(
             "UPDATE history SET username=? WHERE username=?",
         (username, old_username)

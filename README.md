@@ -53,6 +53,12 @@ The system also includes an **admin dashboard** for monitoring users and tasks.
 - Search feature
 -Profile photo feature
 
+### 🔔 Smart Notifications
+- Due today reminders.
+- Overdue task alerts.
+- Unread notification counter.
+- Automatic read status update.
+
 # Tech Stack
 ### Backend
 - Python
@@ -91,6 +97,7 @@ Smart-Task-Manager/
 |   ├── weekly_report.html
 |   ├── history.html
 |   ├── edit_profile.html
+│   ├── notifications.html
 │
 ├── /static
 │   ├── style.css

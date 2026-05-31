@@ -55,6 +55,23 @@
             {% endif %}
             <a href="/history">History</a>
             <a href="/logout">Logout</a>
+
+            <div class="notification-menu">
+
+                <a href="{{ url_for('notifications') }}" class="notification-link">
+
+                    <i class="fa-solid fa-bell"></i>
+
+                    {% if unread_count > 0 %}
+                    <span class="notification-count">
+                        {{ unread_count }}
+                    </span>
+                    {% endif %}
+
+                </a>
+
+            </div>
+
             {% else %}
             <a href="/login">Login</a>
             <a href="/register">Register</a>

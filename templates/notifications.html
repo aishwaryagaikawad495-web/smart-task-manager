@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+Notifications
+{% endblock %}
+
+{% block content %}
+
+<div class="notification-page">
+
+    <div class="notification-header">
+        <h1>Notifications</h1>
+        <p>Stay updated with task reminders and activity alerts.</p>
+    </div>
+
+    {% if notifications %}
+
+    {% for n in notifications %}
+
+    <div class="notification-card">
+
+        <p>{{ n[3] }}</p>
+
+        <small>{{ n[5] }}</small>
+
+    </div>
+
+    {% endfor %}
+
+    {% else %}
+
+    <p>No Notifications Yet</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
