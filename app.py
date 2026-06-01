@@ -965,6 +965,69 @@ def weekly_report():
         )
     else:
         overdue_percentage = 0
+
+
+    ai_suggestions = []
+
+# Productivity based suggestions
+    if productivity < 50:
+        ai_suggestions.append(
+            "Your productivity is below 50%. Try completing smaller tasks first to build momentum."
+        )
+
+    elif productivity < 80:
+        ai_suggestions.append(
+            "Good progress! Completing a few more tasks on time can push your productivity above 80%."
+        )
+
+    else:
+        ai_suggestions.append(
+            "Excellent productivity! Maintain your current workflow and consistency."
+        )
+
+# Overdue analysis
+    if overdue_tasks > 0:
+        ai_suggestions.append(
+            f"You have {overdue_tasks} overdue task(s). Consider prioritizing them this week."
+        )
+
+# High priority analysis
+    if high_priority > 5:
+        ai_suggestions.append(
+            "You currently have many high-priority tasks. Breaking them into smaller subtasks may improve focus."
+        )
+
+# Streak analysis
+    if completion_streak >= 5:
+        ai_suggestions.append(
+            f"Amazing! You are on a {completion_streak}-day completion streak."
+        )
+
+    elif completion_streak == 0:
+        ai_suggestions.append(
+            "Start a task completion streak by finishing at least one task today."
+        )
+
+# Most productive day
+    if most_productive_day != "No Data":
+        ai_suggestions.append(
+            f"Your most productive day is {most_productive_day}. Schedule important tasks on this day."
+        )
+
+# Average completion time
+    if completion_durations:
+
+        if avg_days > 5:
+            ai_suggestions.append(
+                "Tasks take several days to complete on average. Consider breaking large tasks into smaller milestones."
+            )
+
+        else:
+            ai_suggestions.append(
+                "Your task completion speed is efficient. Keep maintaining this pace."
+            )
+
+
     return render_template(
 
         "weekly_report.html",
@@ -991,7 +1054,8 @@ def weekly_report():
         overdue_percentage=overdue_percentage,
         weekly_values=weekly_values,
         total_week_activity=total_week_activity,
-        insight=insight
+        insight=insight,
+        ai_suggestions=ai_suggestions
     )
 
 
@@ -1258,6 +1322,21 @@ def edit_profile():
 
             filename = f"{uuid.uuid4()}_{secure_filename(file.filename)}"
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            c.execute(
+                "SELECT profile_pic FROM users WHERE id=?",
+                (user_id,)
+            )
+            old_photo = c.fetchone()[0]
+
+            if old_photo and old_photo != "default.png":
+                old_path = os.path.join(
+                    app.config['UPLOAD_FOLDER'],
+                    old_photo
+                )
+
+                if os.path.exists(old_path):
+                    os.remove(old_path)
 
             c.execute("""
                 UPDATE users
