@@ -1,192 +1,230 @@
-# Smart Task Manager (Flask + SQLite)
+# 🚀 Smart Task Manager
 
-A full-stack task management web application built using Flask, SQLite, HTML, CSS, and JavaScript.  
-It helps users efficiently manage tasks with **analytics, priority tracking, activity history, and performance reports**.  
-The system also includes an **admin dashboard** for monitoring users and tasks.
+A full-stack productivity and task management web application built with **Flask, SQLite, HTML, CSS, and JavaScript**. The application helps users efficiently organize tasks, track productivity, analyze performance trends, and improve workflow through analytics, notifications, and AI-powered suggestions.
 
+Designed with scalability and user experience in mind, the project includes secure authentication, task analytics, PDF reporting, activity tracking, and an admin dashboard for system monitoring.
 
-# Features
+---
+
+## ✨ Key Features
+
 ### 🔐 Authentication & Security
-- User Registration & Login
-- Secure Password Hashing
-- Strong Password Validation
-- Session Management
-- Admin Role Access
+
+* User Registration & Login
+* Secure Password Hashing using Werkzeug
+* Strong Password Validation
+* Session-Based Authentication
+* Role-Based Access Control (Admin/User)
 
 ### 📋 Task Management
-- Add Tasks
-- Edit Tasks
-- Delete Tasks
-- Mark Tasks as Completed
-- Priority Levels (High / Medium / Low)
-- Automatic Overdue Detection
 
-## 📜 Activity History System
-- Tracks all user actions:
-  - Task creation
-  - Task updates
-  - Task deletion
-  - Task completion
-  - Login & logout events
+* Create, Update, and Delete Tasks
+* Mark Tasks as Completed
+* Priority Levels (High, Medium, Low)
+* Automatic Overdue Task Detection
+* Task Search Functionality
 
+### 🤖 AI-Powered Task Suggestions
+
+* Intelligent task recommendations
+* Productivity improvement suggestions
+* Smart guidance based on task activity
+
+### 📜 Activity History
+
+Track all important user actions:
+
+* Task Creation
+* Task Updates
+* Task Deletion
+* Task Completion
+* User Login Events
+* User Logout Events
 
 ### 📊 Productivity Analytics
-- Weekly Productivity Dashboard
-- Doughnut & Line Charts
-- Weekly Completion Trends
-- Productivity Percentage
-- Most Productive Day
-- Completion Streak Tracking
-- Overdue Task Analytics
 
-### 📄 PDF Reporting
-- Download Weekly Productivity Reports
-- Task Summary Tables
-- Priority Analysis
-- Weekly Activity Breakdown
-
-### 🎨 UI Features
-- Dark Mode
-- Responsive Dashboard
-- Animated Charts & Progress Bars
-- Admin Dashboard Navigation
-- Search feature
--Profile photo feature
+* Weekly Productivity Dashboard
+* Task Completion Trends
+* Productivity Percentage Calculation
+* Most Productive Day Analysis
+* Completion Streak Tracking
+* Overdue Task Statistics
+* Interactive Charts and Visualizations
 
 ### 🔔 Smart Notifications
-- Due today reminders.
-- Overdue task alerts.
-- Unread notification counter.
-- Automatic read status update.
 
-# Tech Stack
+* Due Today Reminders
+* Overdue Task Alerts
+* Unread Notification Counter
+* Automatic Notification Status Updates
+
+### 📄 PDF Report Generation
+
+Generate downloadable productivity reports containing:
+
+* Weekly Task Summary
+* Priority Distribution Analysis
+* Activity Breakdown
+* Performance Insights
+
+### 👤 User Profile Management
+
+* Profile Photo Upload
+* Profile Editing
+* Personalized Dashboard Experience
+
+### 🛠️ Admin Dashboard
+
+* Monitor Users
+* View Task Statistics
+* Track Platform Activity
+* Administrative Controls
+
+---
+
+## 🏗️ Technology Stack
+
 ### Backend
-- Python
-- Flask
-- SQLite3
-- Werkzeug (Security)
+
+* Python
+* Flask
+* SQLite
+* Werkzeug Security
 
 ### Frontend
-- HTML5
-- CSS3
-- JavaScript
-- Chart.js
-- Jinja2
 
-### PDF Generation
-- ReportLab
+* HTML5
+* CSS3
+* JavaScript
+* Jinja2 Templates
+* Chart.js
 
+### Reporting
 
+* ReportLab (PDF Generation)
 
-# Project Structure
+---
+
+## 📂 Project Structure
+
+```text
 Smart-Task-Manager/
 │
 ├── app.py
-├── data.db   (optional to include)
 ├── requirements.txt
+├── data.db
 │
-├── /templates
+├── templates/
+│   ├── base.html
 │   ├── index.html
 │   ├── login.html
 │   ├── register.html
 │   ├── tasks.html
-│   ├── admin.html
+│   ├── history.html
 │   ├── profile.html
-│   ├── base.html
-|   ├── edit_task.html
-|   ├── weekly_report.html
-|   ├── history.html
-|   ├── edit_profile.html
+│   ├── edit_profile.html
+│   ├── edit_task.html
 │   ├── notifications.html
+│   ├── weekly_report.html
+│   └── admin.html
 │
-├── /static
+├── static/
 │   ├── style.css
-│   └── script.js
-│   └── script1.js
-│   ├── uploads
+│   ├── script.js
+│   ├── script1.js
+│   └── uploads/
 │
 └── README.md
-
-# How to Run This Project
-## 1. Clone Repository
-
-```bash
-git clone <your-github-repo-link>
 ```
 
-## 2. Navigate to Project Folder
+---
+
+## ⚙️ Installation & Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+```
+
+### 2. Navigate to the Project Directory
 
 ```bash
 cd Smart-Task-Manager
 ```
 
-## 3. Create Virtual Environment
+### 3. Create a Virtual Environment
 
 ```bash
 python -m venv venv
 ```
 
-## 4. Activate Virtual Environment
+### 4. Activate the Virtual Environment
 
-### Windows
+#### Windows
 
 ```bash
 venv\Scripts\activate
 ```
 
-### Mac/Linux
+#### Linux / macOS
 
 ```bash
 source venv/bin/activate
 ```
 
-## 5. Install Dependencies
-
-```bash
-pip install flask
-```
-
-or
+### 5. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 6. Run Application
+### 6. Run the Application
 
 ```bash
 python app.py
 ```
 
-## 7. Open in Browser
+### 7. Open in Browser
 
-```bash
-http://127.0.0.1:5000/
+```text
+http://127.0.0.1:5000
 ```
 
 ---
 
-# Default Admin Credentials
+## 🎯 Learning Outcomes
 
-```bash
-Username: admin
-Password: Abcd1234@
-```
+This project demonstrates practical experience with:
 
----
-
-# Future Improvements
-- Task Categories
-- Email Authentication
-- REST API Integration
-- Deployment on Render/Heroku
--AI Task Suggestions
--Calendar Integration
--Team Collaboration
--Email reminder
+* Full-Stack Web Development
+* Flask Application Development
+* Authentication & Authorization
+* Database Management with SQLite
+* Data Visualization
+* PDF Report Generation
+* AI Feature Integration
+* Responsive UI Design
+* Software Project Organization
 
 ---
 
-# Author
+## 🚀 Future Enhancements
 
-Aishwarya Gaikawad
+* Task Categories & Labels
+* Email Verification
+* Email Reminders
+* Team Collaboration
+* REST API Development
+* Cloud Deployment
+* Calendar Integration
+* Achievement Badges System
+* Advanced AI Productivity Insights
+
+---
+
+## 👩‍💻 Author
+
+**Aishwarya Gaikawad**
+
+Aspiring Software Developer passionate about building practical web applications using Python, Flask, and modern web technologies.
