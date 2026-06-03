@@ -29,6 +29,91 @@
 
         </div>
 
+        <div class="achievement-section">
+
+            <div class="achievement-header">
+                <h3>Professional Achievements</h3>
+                <p>Recognition earned through productivity and task management excellence.</p>
+            </div>
+
+            <div class="badge-grid">
+
+                {% if completed_tasks >= 25 %}
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="achievement-content">
+                        <h4>Execution Excellence</h4>
+                        <span>25+ Tasks Completed</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if completed_tasks >= 50 %}
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <div class="achievement-content">
+                        <h4>Productivity Leader</h4>
+                        <span>50+ Tasks Completed</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if completion_percentage >= 80 %}
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="achievement-content">
+                        <h4>Performance Excellence</h4>
+                        <span>80% Completion Rate</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if completion_percentage >= 90 %}
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="achievement-content">
+                        <h4>Elite Contributor</h4>
+                        <span>90%+ Productivity Score</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if pending_tasks == 0 and total_tasks > 0 %}
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="achievement-content">
+                        <h4>Backlog Free</h4>
+                        <span>Zero Pending Tasks</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if total_tasks >= 100 %}
+                <div class="achievement-card">
+                    <div class="achievement-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="achievement-content">
+                        <h4>Workflow Strategist</h4>
+                        <span>100+ Tasks Managed</span>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+
+
+        </div>
 
         <div class="profile-stats">
 
