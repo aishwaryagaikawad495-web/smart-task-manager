@@ -117,9 +117,21 @@ Generate downloadable productivity reports containing:
 
 ## 📂 Project Structure
 
-```text
 Smart-Task-Manager/
 │
+├── screenshots/
+│   ├── home.png
+│   ├── login.png
+│   ├── register.png
+│   ├── tasks.png
+│   ├── analytics-1.png
+│   ├── analytics-2.png
+│   ├── analytics-3.png
+│   ├── analytics-4.png
+│   ├── admin_dashboard.png
+│   ├── profile.png
+│   ├── notifications.png
+│   └── admin.png
 ├── app.py
 ├── requirements.txt
 ├── data.db
@@ -145,7 +157,41 @@ Smart-Task-Manager/
 │   └── uploads/
 │
 └── README.md
-```
+
+
+---
+
+## 📸 Application Screenshots
+
+### 🏠 Home Page
+![Home Page](screenshots/home.png)
+
+### 🔐 Login Page
+![Login Page](screenshots/login.png)
+
+### 📝 Register Page
+![Register Page](screenshots/register.png)
+
+### 📋 Task Management
+![Tasks](screenshots/tasks.png)
+
+### 📊 Weekly Analytics Dashboard
+![Analytics](screenshots/analytics-1.png)
+![Analytics](screenshots/analytics-2.png)
+![Analytics](screenshots/analytics-3.png)
+![Analytics](screenshots/analytics-4.png)
+
+### 👤 User Profile & Achievements
+![Profile](screenshots/profile.png)
+
+### 🔔 Notifications
+![Notifications](screenshots/notifications.png)
+
+### 📜 Task History
+![History](screenshots/history.png)
+
+### 🛠️ Admin Dashboard
+![Admin](screenshots/admin_dashboard.png)
 
 ---
 
